@@ -170,57 +170,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     </FormItem>
                   )}
                 />
-                <div className="col-span-1 ">
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <div className="focus-within:border-1 relative overflow-hidden rounded-lg border pb-5 focus-within:border-black focus-within:ring-0 focus-within:ring-black">
-                            <Textarea
-                              id="description"
-                              placeholder="Description"
-                              onKeyDown={allowOnlyLetterNumber}
-                              maxLength={1000}
-                              {...field}
-                            />
-                            <span className="absolute bottom-0 left-3 text-xs text-gray-500">
-                              {watchDescription + 0} / 1000
-                            </span>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="colour"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Colours</FormLabel>
-                      <FormControl>
-                        {!isEditMode ? (
-                          <MultiColorInput
-                            value={field.value || []}
-                            onChange={field.onChange}
-                            placeholder="Type a color and press Enter"
-                          />
-                        ) : (
-                          <InputField
-                            id="colour"
-                            placeholder="Colour"
-                            {...field}
-                          />
-                        )}
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="measurementType"
@@ -258,6 +207,58 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="colour"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Colours</FormLabel>
+                      <FormControl>
+                        {!isEditMode ? (
+                          <MultiColorInput
+                            value={field.value || []}
+                            onChange={field.onChange}
+                            placeholder="Type a color and press Enter"
+                            className="flex h-[100px] items-start justify-start"
+                          />
+                        ) : (
+                          <InputField
+                            id="colour"
+                            placeholder="Colour"
+                            {...field}
+                          />
+                        )}
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="col-span-1 ">
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <div className="focus-within:border-1 h-[100px] relative overflow-hidden rounded-lg border pb-5 focus-within:border-black focus-within:ring-0 focus-within:ring-black">
+                            <Textarea
+                              id="description"
+                              placeholder="Description"
+                              onKeyDown={allowOnlyLetterNumber}
+                              maxLength={1000}
+                              {...field}
+                            />
+                            <span className="absolute bottom-0 left-3 text-xs text-gray-500">
+                              {watchDescription + 0} / 1000
+                            </span>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
 
               <div className="bottom-10 right-10 flex justify-end gap-4 mt-5">
