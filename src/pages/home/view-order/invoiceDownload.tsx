@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Download, Loader, Mail, MapPin, Phone } from "lucide-react";
+import { Banknote, Download, Loader, Mail, MapPin, Phone } from "lucide-react";
 import { formatStringDate, formatAddress } from "@/lib/utils";
 import CustomTable from "@/components/ui/Table";
 import { useGetBookingById } from "@/services/queries";
@@ -95,7 +95,13 @@ const InvoiceDownload = () => {
                 <Phone size={13} />
                 {bookingData?.organizationId?.contactNumber
                   ? `+91 ${bookingData.organizationId.contactNumber}`
-                  : "No Contact No Found"}
+                  : "No Contact Number Found"}
+              </div>
+              <div className="flex items-center gap-1 font-medium text-[#000000]">
+                <Banknote size={13} />
+                {bookingData?.organizationId?.gstNumber
+                  ? `${bookingData.organizationId.gstNumber}`
+                  : "No GST Number Found"}
               </div>
             </div>
 
@@ -106,7 +112,7 @@ const InvoiceDownload = () => {
                 {formatAddress(bookingData?.organizationId?.address || "").map(
                   (line, index) => (
                     <div key={index}>{line}</div>
-                  )
+                  ),
                 )}
               </div>
             </div>
@@ -121,6 +127,9 @@ const InvoiceDownload = () => {
             <div className="text-xs font-medium text-[#4D4D4D]">Billed To</div>
             <div className="mb-1 text-base font-semibold leading-[18px] text-[#000000]">
               {bookingData?.customer?.customerName}
+            </div>
+            <div className="text-xs font-medium">
+              {bookingData?.customer?.gstNumber}
             </div>
           </div>
           <div className="text-xs">
@@ -237,7 +246,7 @@ const InvoiceDownload = () => {
                     <div className="mt-[2.5px] h-1.5 min-h-1.5 w-1.5 min-w-1.5 rounded-full bg-black"></div>
                     <span className="text-[8px]">{rule}</span>
                   </li>
-                )
+                ),
               )
             ) : (
               <li className="flex items-start gap-2">

@@ -156,21 +156,21 @@ const CreateBookingPage = () => {
                                 (product) =>
                                   !watchProduct.some(
                                     (selected) =>
-                                      selected.productId === product.value
-                                  )
+                                      selected.productId === product.value,
+                                  ),
                               )}
                               value={
                                 allProducts.find(
                                   (product) =>
                                     product.value.toString() ===
-                                    field.value.toString()
+                                    field.value.toString(),
                                 )?.label ?? ""
                               }
                               setValue={(value) => {
                                 handleSelectProduct(value, index);
                                 form.setValue(
                                   `products.${index}.productId`,
-                                  value.value
+                                  value.value,
                                 );
                               }}
                               search={searchProduct}
@@ -202,7 +202,7 @@ const CreateBookingPage = () => {
                                 disabled
                                 className="resize-none bg-white"
                                 value={`${Number(
-                                  watchProduct?.[index]?.stock
+                                  watchProduct?.[index]?.stock,
                                 )}`}
                               />
                             </FormControl>
@@ -226,7 +226,7 @@ const CreateBookingPage = () => {
                                 disabled
                                 className="resize-none bg-white"
                                 value={`${Number(
-                                  watchProduct?.[index]?.perUnitCost || 0
+                                  watchProduct?.[index]?.perUnitCost || 0,
                                 ).toLocaleString("en-IN", {
                                   maximumFractionDigits: 3,
                                 })}`}
@@ -308,7 +308,7 @@ const CreateBookingPage = () => {
                           .filter(
                             (conflict: conflictProps) =>
                               conflict?.productId ===
-                              watchProduct[index]?.productId
+                              watchProduct[index]?.productId,
                           )
                           .map((conflict: conflictProps, i: number) => (
                             <span key={i}>
@@ -367,6 +367,30 @@ const CreateBookingPage = () => {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name={`gstNumber`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>GST Number (Billing to) </FormLabel>
+                        <FormControl>
+                          <InputField
+                            id="unit"
+                            placeholder="GST Number"
+                            className="resize-none bg-white"
+                            type="string"
+                            {...field}
+                            value={field.value ?? ""} // fallback for undefined
+                            onChange={(e) =>
+                              field.onChange((e.target.value))
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
 
                   <FormField
                     control={form.control}
@@ -413,7 +437,7 @@ const CreateBookingPage = () => {
                             sum +
                             Number(product?.perUnitCost ?? 0) *
                               Number(product?.unit),
-                          0
+                          0,
                         )
                         .toFixed(2)}
                     </span>
@@ -432,7 +456,7 @@ const CreateBookingPage = () => {
                               sum +
                               Number(product?.perUnitCost ?? 0) *
                                 Number(product?.unit ?? 0),
-                            0
+                            0,
                           ) *
                           Number(form.watch("gstRate") ?? 0)) /
                         200
@@ -453,7 +477,7 @@ const CreateBookingPage = () => {
                               sum +
                               Number(product?.perUnitCost ?? 0) *
                                 Number(product?.unit ?? 0),
-                            0
+                            0,
                           ) *
                           Number(form.watch("gstRate") ?? 0)) /
                         200
@@ -476,7 +500,7 @@ const CreateBookingPage = () => {
                               sum +
                               Number(product?.perUnitCost ?? 0) *
                                 Number(product?.unit ?? 0),
-                            0
+                            0,
                           ) +
                         (form
                           .getValues("products")
@@ -485,7 +509,7 @@ const CreateBookingPage = () => {
                               sum +
                               Number(product?.perUnitCost ?? 0) *
                                 Number(product?.unit ?? 0),
-                            0
+                            0,
                           ) *
                           Number(form.watch("gstRate") ?? 0)) /
                           100

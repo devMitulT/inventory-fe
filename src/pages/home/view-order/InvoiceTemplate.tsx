@@ -1,5 +1,5 @@
 import React from "react";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Banknote, Mail, MapPin, Phone } from "lucide-react";
 import { formatStringDate, formatAddress } from "@/lib/utils";
 import CustomTable from "@/components/ui/Table";
 
@@ -54,7 +54,13 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
                   {bookingData?.organizationId?.email || "No Email Found"}
                 </div>
               </span>
-
+              <span className="-mt-3.5 flex items-center gap-1 font-normal text-[#000000] print:mt-0">
+                <Banknote size={14} strokeWidth={1.5} className="font-normal" />
+                <div className="break-words pb-3.5 text-xs font-normal print:pb-0">
+                  {bookingData?.organizationId?.gstNumber ||
+                    "No GST Number Found"}
+                </div>
+              </span>
               <span className="-mt-3.5 flex items-center gap-1 font-normal text-[#000000] print:mt-0">
                 <Phone size={14} strokeWidth={1.5} className="font-normal" />
                 <div className="break-words pb-3.5 text-xs font-normal print:pb-0">
@@ -74,7 +80,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
             {formatAddress(bookingData?.organizationId?.address || "").map(
               (line, index) => (
                 <span key={index}>{line}</span>
-              )
+              ),
             )}
           </div>
         </div>
@@ -89,6 +95,9 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
             <div className="text-xs font-medium text-[#4D4D4D]">Billed To</div>
             <div className="mb-1 text-base font-semibold leading-[18px] text-[#000000]">
               {bookingData?.customer?.customerName}
+            </div>
+            <div className="text-xs font-medium">
+              {bookingData?.customer?.gstNumber}
             </div>
           </div>
           <div className="boredr flex justify-between border-black">
@@ -200,7 +209,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
                       <div className="mt-[7px] h-1.5 min-h-1.5 w-1.5 min-w-1.5 rounded-full bg-black print:mt-0.5"></div>
                       <span className="text-[8px]"> {rule}</span>
                     </li>
-                  )
+                  ),
                 )
               ) : (
                 <li className="flex items-start gap-2">

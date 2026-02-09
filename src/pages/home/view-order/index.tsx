@@ -36,8 +36,8 @@ function ViewOrder() {
     Math.min(
       ...(bookingData?.data?.products || [])
         .map((p: any) => new Date(p.deliveryDate))
-        .filter((d: any) => !isNaN(d))
-    )
+        .filter((d: any) => !isNaN(d)),
+    ),
   );
   const isDisable = earliestDate < now;
   return (
@@ -123,6 +123,9 @@ function ViewOrder() {
                         </span>
                       </>
                     )}
+                  </div>
+                  <div className="flex items-center gap-1.5 text-sm font-medium text-[#4D4D4D]">
+                    {bookingData?.data?.customer?.gstNumber}
                   </div>
                 </div>
                 <div className="flex flex-col items-start gap-1">
