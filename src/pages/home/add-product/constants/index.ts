@@ -29,8 +29,8 @@ export const createProductFormSchema = z.object({
       }),
   ]),
   colour: z
-    .array(z.string().min(0, "Size is required."))
-    .min(1, { message: "Size is required." }),
+    .array(z.string().min(0, "Colour  is required."))
+    .min(1, { message: "Colour is required." }),
 
   sku: z
     .string()

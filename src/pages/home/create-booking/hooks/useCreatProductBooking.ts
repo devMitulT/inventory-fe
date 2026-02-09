@@ -73,6 +73,9 @@ export const useCreatProductBooking = () => {
           amount: initialData?.text
             ? customerDetails?.[5]
             : initialData?.amount.toString(),
+          gstNumber: initialData?.text
+            ? customerDetails?.[6]
+            : initialData?.customer.gstNumber,
         }
       : {
           products: [
@@ -88,6 +91,7 @@ export const useCreatProductBooking = () => {
           phoneNumberPrimary: "",
           phoneNumberSecondary: "",
           amount: "",
+          gstNumber: "",
         },
   });
   const { control } = form;
@@ -101,7 +105,7 @@ export const useCreatProductBooking = () => {
 
   const [deposite, setDeposite] = useState(products?.depositeAmount);
   const [queries, setQueries] = useState<string[]>(
-    new Array(initialData?.products?.length || 1).fill("")
+    new Array(initialData?.products?.length || 1).fill(""),
   );
 
   const { mutateAsync: deleteBooking, isPending: isDeleting } =
@@ -152,7 +156,7 @@ export const useCreatProductBooking = () => {
           (sum, product) =>
             sum +
             Number(product?.perUnitCost ?? 0) * Number(product?.unit ?? 0),
-          0
+          0,
         );
 
         const totalAmount = baseAmount + (baseAmount * gstRate) / 100;
@@ -206,7 +210,7 @@ export const useCreatProductBooking = () => {
       const baseAmount = products.reduce(
         (sum, product) =>
           sum + Number(product?.perUnitCost ?? 0) * Number(product?.unit ?? 0),
-        0
+        0,
       );
 
       const totalAmount = baseAmount + (baseAmount * gstRate) / 100;
@@ -314,11 +318,11 @@ export const useCreatProductBooking = () => {
       label: string;
       value: string;
     },
-    index: number
+    index: number,
   ) => {
     const productId = product.value;
     const findProduct = allProductsData?.find(
-      (product: any) => product._id === productId
+      (product: any) => product._id === productId,
     );
 
     const updatedProducts = form.getValues("products").map((ele, idx) =>
@@ -330,12 +334,12 @@ export const useCreatProductBooking = () => {
             productName: product.label,
             stock: findProduct?.stock,
           }
-        : ele
+        : ele,
     );
 
     const totalAmount = updatedProducts.reduce(
       (acc, curr) => acc + Number(curr.perUnitCost || 0),
-      0
+      0,
     );
 
     form.setValue("products", updatedProducts);
@@ -350,7 +354,7 @@ export const useCreatProductBooking = () => {
 
     products.map((el: any, index: number) => {
       const findProduct = allProductsData?.find(
-        (product: any) => product._id === el.productId
+        (product: any) => product._id === el.productId,
       );
       const updatedProducts = form.getValues("products").map((ele, idx) =>
         idx === index
@@ -358,7 +362,7 @@ export const useCreatProductBooking = () => {
               ...ele,
               stock: findProduct?.stock,
             }
-          : ele
+          : ele,
       );
       form.setValue("products", updatedProducts);
     });

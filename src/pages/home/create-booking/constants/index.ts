@@ -33,7 +33,7 @@ export const productBookingSchema = z
           perUnitCost: z.union([z.number(), z.string().min(1, "")]),
           unit: z.union([z.number(), z.string().min(1, "")]),
           stock: z.union([z.number(), z.string().min(1, "")]),
-        })
+        }),
       )
       .min(1, "At least one product is required."),
     customerName: z
@@ -49,7 +49,18 @@ export const productBookingSchema = z
       .length(10, "Phone number must be exactly 10 digits."),
     phoneNumberSecondary: z.string().optional(),
     amount: z.string().nonempty("Amount is required."),
-
+    gstNumber: z
+      .string()
+      .trim()
+      .optional()
+      .refine(
+        (val) =>
+          !val ||
+          /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(val),
+        {
+          message: "Invalid GST number",
+        },
+      ),
     gstRate: z.coerce
       .number({
         required_error: "GST Rate is required",
@@ -66,7 +77,7 @@ export const productBookingSchema = z
     {
       message: "Alternate number must be different.",
       path: ["phoneNumberSecondary"],
-    }
+    },
   );
 export const createBookingBreadScrum = ["Home", "Create Booking"];
 
