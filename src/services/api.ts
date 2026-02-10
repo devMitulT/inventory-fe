@@ -90,8 +90,10 @@ export const createProduct = async (bodyData: {
   name: string;
   description: string;
   perUnitCost: string | number;
-  colour: string[];
+  colour?: string[] | undefined;
   sku: string;
+  size?:string[] | undefined;
+  gender?:string | undefined;
   stock: number | string;
   thresholdStock: number | string;
   measurementType: string;

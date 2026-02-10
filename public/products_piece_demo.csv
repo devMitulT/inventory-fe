@@ -1,0 +1,4 @@
+name,sku,description,perUnitCost,stock,thresholdStock,gender,size
+Women Kurti,WK-PC-02,Cotton kurti with printed design,850,40,10,women,FREE-XL-XS
+Women Dress,WD-PC-03,Stylish evening wear dress,1500,20,5,women,S-M-L
+Men Shirt,MS-PC-04,Formal cotton shirt for office wear,900,25,5,men,40-42-36

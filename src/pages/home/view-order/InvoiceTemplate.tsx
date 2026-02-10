@@ -1,5 +1,5 @@
 import React from "react";
-import { Banknote, Mail, MapPin, Phone } from "lucide-react";
+import { Banknote, MapPin, Phone } from "lucide-react";
 import { formatStringDate, formatAddress } from "@/lib/utils";
 import CustomTable from "@/components/ui/Table";
 
@@ -49,18 +49,13 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
             </span>
             <div className="flex flex-col items-start gap-1 text-xs font-medium text-[#000000]">
               <span className="flex items-center gap-1">
-                <Mail size={14} strokeWidth={1.5} className="font-normal" />
-                <div className="break-words pb-3.5 text-xs font-normal print:pb-0">
-                  {bookingData?.organizationId?.email || "No Email Found"}
-                </div>
-              </span>
-              <span className="-mt-3.5 flex items-center gap-1 font-normal text-[#000000] print:mt-0">
                 <Banknote size={14} strokeWidth={1.5} className="font-normal" />
                 <div className="break-words pb-3.5 text-xs font-normal print:pb-0">
-                  {bookingData?.organizationId?.gstNumber ||
-                    "No GST Number Found"}
+                  GSTIN :{" "}
+                  {bookingData?.organizationId?.gstNumber || "No GSTIN Found"}
                 </div>
               </span>
+
               <span className="-mt-3.5 flex items-center gap-1 font-normal text-[#000000] print:mt-0">
                 <Phone size={14} strokeWidth={1.5} className="font-normal" />
                 <div className="break-words pb-3.5 text-xs font-normal print:pb-0">
@@ -96,9 +91,11 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
             <div className="mb-1 text-base font-semibold leading-[18px] text-[#000000]">
               {bookingData?.customer?.customerName}
             </div>
-            <div className="text-xs font-medium">
-              {bookingData?.customer?.gstNumber}
-            </div>
+            {bookingData?.customer?.gstNumber && (
+              <div className="text-xs font-medium">
+                GSTIN : {bookingData?.customer?.gstNumber}
+              </div>
+            )}
           </div>
           <div className="boredr flex justify-between border-black">
             <div className="items-between flex flex-col">
@@ -153,39 +150,62 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
                 })}
               </span>
             </div>
-            <div className="flex w-full flex-row justify-between">
-              <span className="text-sm font-medium text-[#4D4D4D]">CGST:</span>
-              <span className="flex items-center text-sm font-semibold text-[#E58E02]">
-                <span className="mr-[1px]">₹</span>
-                {(
-                  (bookingData?.amount -
-                    bookingData?.amount / (1 + bookingData?.gstRate / 100)) *
-                  0.5
-                )?.toLocaleString("en-IN", {
-                  maximumFractionDigits: 3,
-                })}
-              </span>
-            </div>
-            <div className="flex w-full flex-row justify-between">
-              <span className="text-sm font-medium text-[#4D4D4D]">SGST:</span>
-              <span className="flex items-center text-sm font-semibold text-[#E58E02]">
-                <span className="mr-[1px]">₹</span>
-                {(
-                  (bookingData?.amount -
-                    bookingData?.amount / (1 + bookingData?.gstRate / 100)) *
-                  0.5
-                )?.toLocaleString("en-IN", {
-                  maximumFractionDigits: 3,
-                })}
-              </span>
-            </div>
+            {bookingData?.gstRate > 0 && (
+              <div className="flex w-full flex-row justify-between">
+                <span className="text-sm font-medium text-[#4D4D4D]">
+                  CGST:
+                </span>
+                <span className="flex items-center text-sm font-semibold text-[#E58E02]">
+                  <span className="mr-[1px]">₹</span>
+                  {(
+                    (bookingData?.amount -
+                      bookingData?.amount / (1 + bookingData?.gstRate / 100)) *
+                    0.5
+                  )?.toLocaleString("en-IN", {
+                    maximumFractionDigits: 3,
+                  })}
+                </span>
+              </div>
+            )}
+            {bookingData?.gstRate > 0 && (
+              <div className="flex w-full flex-row justify-between">
+                <span className="text-sm font-medium text-[#4D4D4D]">
+                  SGST:
+                </span>
+                <span className="flex items-center text-sm font-semibold text-[#E58E02]">
+                  <span className="mr-[1px]">₹</span>
+                  {(
+                    (bookingData?.amount -
+                      bookingData?.amount / (1 + bookingData?.gstRate / 100)) *
+                    0.5
+                  )?.toLocaleString("en-IN", {
+                    maximumFractionDigits: 3,
+                  })}
+                </span>
+              </div>
+            )}
+
+            {bookingData?.discountAmount > 0 && (
+              <div className="flex w-full flex-row justify-between">
+                <span className="text-sm font-medium text-[#4D4D4D]">
+                  Discount:
+                </span>
+                <span className="flex items-center text-sm font-semibold text-green-500">
+                  <span className="mr-[1px]">- ₹</span>
+                  {Number(bookingData?.discountAmount).toFixed(2)}
+                </span>
+              </div>
+            )}
             <div className="mb-2 flex w-full flex-row justify-between print:mb-0">
               <span className="pb-1 text-sm font-medium text-[#4D4D4D] print:p-0">
                 Total:
               </span>
               <span className="flex items-center text-sm font-semibold text-[#000000]">
                 <span className="mr-[1px]">₹</span>
-                {(Number(bookingData?.amount) || 0).toLocaleString("en-IN", {
+                {(
+                  Number(bookingData?.amount) -
+                    Number(bookingData?.discountAmount) || 0
+                ).toLocaleString("en-IN", {
                   maximumFractionDigits: 3,
                 })}
               </span>

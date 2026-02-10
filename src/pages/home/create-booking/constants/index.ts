@@ -61,6 +61,9 @@ export const productBookingSchema = z
           message: "Invalid GST number",
         },
       ),
+    discountAmount: z
+      .number()
+      .min(0, "Discount amount must be greater than 0."),
     gstRate: z.coerce
       .number({
         required_error: "GST Rate is required",
@@ -77,6 +80,16 @@ export const productBookingSchema = z
     {
       message: "Alternate number must be different.",
       path: ["phoneNumberSecondary"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (!data.amount) return true;
+      return Number(data.amount) >= data.discountAmount;
+    },
+    {
+      message: "Discount must be less than total amount.",
+      path: ["discountAmount"],
     },
   );
 export const createBookingBreadScrum = ["Home", "Create Booking"];

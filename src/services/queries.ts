@@ -119,7 +119,9 @@ export const useCreateProduct = () => {
       name: string;
       description: string;
       perUnitCost: string | number;
-      colour: string[];
+      colour?: string[] | undefined;
+      size?:string[] | undefined;
+      gender?:string | undefined;
       sku: string;
       stock: number | string;
       thresholdStock: number | string;

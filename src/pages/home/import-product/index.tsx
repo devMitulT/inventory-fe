@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/Select";
 import CircularProgressLoader from "@/components/ui/Spinner";
-import { measurementType } from "./constants";
+import { measurementType } from "../add-product/constants";
 
 const UserDataImport = () => {
   const {
@@ -31,7 +31,6 @@ const UserDataImport = () => {
     selectedFile,
     setSelectedFile,
   } = useUserDataImport();
-
   return (
     <div className="flex flex-col gap-4">
       <BreadcrumbWrapper routes={changeUserImportBreadCrumb} />
@@ -65,15 +64,15 @@ const UserDataImport = () => {
                           <SelectContent className="bg-slate-200">
                             <SelectGroup>
                               {measurementType.map(
-                                (category: string, index: number) => (
+                                (category: any, index: number) => (
                                   <SelectItem
                                     key={index}
-                                    value={category}
+                                    value={category.value}
                                     className="hover:cursor-pointer"
                                   >
-                                    {category}
+                                    {category.label}
                                   </SelectItem>
-                                )
+                                ),
                               )}
                             </SelectGroup>
                           </SelectContent>
@@ -90,15 +89,21 @@ const UserDataImport = () => {
                     <FormItem className="gap-4">
                       <div className="flex justify-between">
                         <FormLabel>Import Product CSV</FormLabel>
-                        <Button type="button" variant="outline" asChild>
-                          <a
-                            href="/sample_CsvFile.csv"
-                            className="mt-1 text-xs font-medium text-[#1071D8]"
-                            download
-                          >
-                            Download Sample CSV
-                          </a>
-                        </Button>
+                        {form.watch("measurementType") && (
+                          <Button type="button" variant="outline" asChild>
+                            <a
+                              href={
+                                form.watch("measurementType") === "meter"
+                                  ? "/products_meter_demo.csv"
+                                  : "/products_piece_demo.csv"
+                              }
+                              className="mt-1 text-xs font-medium text-[#1071D8]"
+                              download
+                            >
+                              Download Sample CSV
+                            </a>
+                          </Button>
+                        )}
                       </div>
                       <div
                         id="importCSV"
@@ -149,7 +154,7 @@ const UserDataImport = () => {
                             onClick={() => {
                               setSelectedFile(null);
                               const input = document.getElementById(
-                                "csvInput"
+                                "csvInput",
                               ) as HTMLInputElement;
                               if (input) input.value = "";
                               //@ts-ignore

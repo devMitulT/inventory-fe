@@ -16,7 +16,7 @@ export const useEditProduct = () => {
   const navigate = useNavigate();
   const productId = location.pathname.split("/").pop();
   const { data: productsData, isLoading } = useGetProductById(
-    productId as string
+    productId as string,
   );
   const [product, setProduct] = useState<Product | undefined>(undefined);
 
@@ -66,6 +66,8 @@ export const useEditProductDetails = ({ product }: EditProductProps) => {
       measurementType: product.measurementType,
       stock: String(product?.stock),
       thresholdStock: String(product?.thresholdStock),
+      gender: String(product?.gender),
+      size: String(product?.size),
     },
   });
 

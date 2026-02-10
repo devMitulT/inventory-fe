@@ -75,7 +75,10 @@ export const useCreatProductBooking = () => {
             : initialData?.amount.toString(),
           gstNumber: initialData?.text
             ? customerDetails?.[6]
-            : initialData?.customer.gstNumber,
+            : initialData?.customer?.gstNumber,
+          discountAmount: initialData?.text
+            ? customerDetails?.[7]
+            : initialData?.discountAmount,
         }
       : {
           products: [
@@ -92,6 +95,8 @@ export const useCreatProductBooking = () => {
           phoneNumberSecondary: "",
           amount: "",
           gstNumber: "",
+          gstRate: "",
+          discountAmount: "",
         },
   });
   const { control } = form;
