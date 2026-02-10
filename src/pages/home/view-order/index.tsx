@@ -125,7 +125,7 @@ function ViewOrder() {
                     )}
                   </div>
                   <div className="flex items-center gap-1.5 text-sm font-medium text-[#4D4D4D]">
-                    {bookingData?.data?.customer?.gstNumber}
+                    GSTIN : {bookingData?.data?.customer?.gstNumber}
                   </div>
                 </div>
                 <div className="flex flex-col items-start gap-1">
@@ -184,38 +184,53 @@ function ViewOrder() {
                         })}
                       </span>
                     </div>
-                    <div className="flex flex-row justify-between px-4 py-0.5">
-                      <span className="text-sm font-medium text-[#4D4D4D]">
-                        CGST:
-                      </span>
-                      <span className="text-sm font-semibold text-[#E58E02]">
-                        ₹
-                        {(
-                          (bookingData?.data?.amount -
-                            bookingData?.data?.amount /
-                              (1 + bookingData?.data?.gstRate / 100)) *
-                          0.5
-                        )?.toLocaleString("en-IN", {
-                          maximumFractionDigits: 3,
-                        })}
-                      </span>
-                    </div>
-                    <div className="flex flex-row justify-between px-4 py-0.5">
-                      <span className="text-sm font-medium text-[#4D4D4D]">
-                        SGST:
-                      </span>
-                      <span className="text-sm font-semibold text-[#E58E02]">
-                        ₹
-                        {(
-                          (bookingData?.data?.amount -
-                            bookingData?.data?.amount /
-                              (1 + bookingData?.data?.gstRate / 100)) *
-                          0.5
-                        )?.toLocaleString("en-IN", {
-                          maximumFractionDigits: 3,
-                        })}
-                      </span>
-                    </div>
+                    {bookingData?.data?.gstRate > 0 && (
+                      <div className="flex flex-row justify-between px-4 py-0.5">
+                        <span className="text-sm font-medium text-[#4D4D4D]">
+                          CGST:
+                        </span>
+                        <span className="text-sm font-semibold text-[#E58E02]">
+                          ₹
+                          {(
+                            (bookingData?.data?.amount -
+                              bookingData?.data?.amount /
+                                (1 + bookingData?.data?.gstRate / 100)) *
+                            0.5
+                          )?.toLocaleString("en-IN", {
+                            maximumFractionDigits: 3,
+                          })}
+                        </span>
+                      </div>
+                    )}
+                    {bookingData?.data?.gstRate > 0 && (
+                      <div className="flex flex-row justify-between px-4 py-0.5">
+                        <span className="text-sm font-medium text-[#4D4D4D]">
+                          SGST:
+                        </span>
+                        <span className="text-sm font-semibold text-[#E58E02]">
+                          ₹
+                          {(
+                            (bookingData?.data?.amount -
+                              bookingData?.data?.amount /
+                                (1 + bookingData?.data?.gstRate / 100)) *
+                            0.5
+                          )?.toLocaleString("en-IN", {
+                            maximumFractionDigits: 3,
+                          })}
+                        </span>
+                      </div>
+                    )}
+                    {bookingData?.data?.discountAmount > 0 && (
+                      <div className="flex flex-row justify-between px-4 py-0.5">
+                        <span className="text-sm font-medium text-[#4D4D4D]">
+                          Discount:
+                        </span>
+                        <span className="text-sm font-semibold text-green-500">
+                          - ₹
+                          {Number(bookingData?.data?.discountAmount).toFixed(2)}
+                        </span>
+                      </div>
+                    )}
                     <div className="flex flex-row justify-between rounded-[0_0_8px_8px] bg-[#FAFAFA] px-4 pb-[7px] pt-[2px]">
                       <span className="text-sm font-medium text-[#4D4D4D]">
                         Total:
@@ -223,7 +238,8 @@ function ViewOrder() {
                       <span className="text-sm font-semibold text-[#000000]">
                         ₹
                         {(
-                          Number(bookingData?.data?.amount) || 0
+                          Number(bookingData?.data?.amount) -
+                            Number(bookingData?.data?.discountAmount) || 0
                         ).toLocaleString("en-IN", {
                           maximumFractionDigits: 3,
                         })}

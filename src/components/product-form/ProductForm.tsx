@@ -14,13 +14,24 @@ import {
 } from "@/components/ui/Form";
 import { InputField } from "@/components/ui/Input";
 import { FormField, FormItem } from "@/contexts/FormContexts";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ChevronDown } from "lucide-react";
 
 import { Textarea } from "@/components/ui/TextArea";
 import CircularProgressLoader from "@/components/ui/Spinner";
 import { UseFormReturn } from "react-hook-form";
 import { MultiColorInput } from "../ui/MultiColorInput";
 
-import { measurementType } from "@/pages/home/add-product/constants";
+import {
+  measurementType,
+  gender,
+  MEN_SIZES,
+  WOMEN_SIZES,
+} from "@/pages/home/add-product/constants";
 import {
   SelectItem,
   Select,
@@ -170,69 +181,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="measurementType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Measurement Type</FormLabel>
-                      <Select
-                        onValueChange={(value) => field.onChange(value)}
-                        value={field.value}
-                      >
-                        <SelectTrigger
-                          id="category"
-                          className="h-8 w-full rounded-md border px-2  font-normal"
-                        >
-                          <SelectValue placeholder="Measurement Type" />
-                        </SelectTrigger>
-
-                        <SelectContent className="bg-slate-200">
-                          <SelectGroup>
-                            {measurementType.map(
-                              (category: string, index: number) => (
-                                <SelectItem
-                                  key={index}
-                                  value={category}
-                                  className="hover:cursor-pointer"
-                                >
-                                  {category}
-                                </SelectItem>
-                              )
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="colour"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Colours</FormLabel>
-                      <FormControl>
-                        {!isEditMode ? (
-                          <MultiColorInput
-                            value={field.value || []}
-                            onChange={field.onChange}
-                            placeholder="Type a color and press Enter"
-                            className="flex h-[100px] items-start justify-start"
-                          />
-                        ) : (
-                          <InputField
-                            id="colour"
-                            placeholder="Colour"
-                            {...field}
-                          />
-                        )}
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <div className="col-span-1 ">
                   <FormField
                     control={form.control}
@@ -259,6 +207,271 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     )}
                   />
                 </div>
+                <FormField
+                  control={form.control}
+                  name="measurementType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Measurement Type</FormLabel>
+                      <Select
+                        onValueChange={(value) => field.onChange(value)}
+                        value={field.value}
+                        disabled={isEditMode}
+                      >
+                        <SelectTrigger
+                          id="category"
+                          className="h-8 w-full rounded-md border px-2  font-normal"
+                        >
+                          <SelectValue placeholder="Measurement Type" />
+                        </SelectTrigger>
+
+                        <SelectContent className="bg-slate-200">
+                          <SelectGroup>
+                            {measurementType.map(
+                              (category: any, index: number) => (
+                                <SelectItem
+                                  key={index}
+                                  value={category.value}
+                                  className="hover:cursor-pointer"
+                                >
+                                  {category.label}
+                                </SelectItem>
+                              ),
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {form.watch("measurementType") === "meter" && (
+                  <FormField
+                    control={form.control}
+                    name="colour"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Colour</FormLabel>
+                        <FormControl>
+                          {!isEditMode ? (
+                            <MultiColorInput
+                              value={field.value || []}
+                              onChange={field.onChange}
+                              placeholder="Type a color and press Enter"
+                              className="flex h-[100px] items-start justify-start"
+                            />
+                          ) : (
+                            <InputField
+                              id="colour"
+                              placeholder="Colour"
+                              {...field}
+                            />
+                          )}
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                {form.watch("measurementType") === "piece" && (
+                  <div className="flex gap-3">
+                    <FormField
+                      control={form.control}
+                      name="gender"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Gender</FormLabel>
+                          <Select
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                              form.setValue("size", []);
+                            }}
+                            value={field.value}
+                          >
+                            <SelectTrigger
+                              id="category"
+                              className="h-8 w-full rounded-md border px-2  font-normal"
+                            >
+                              <SelectValue placeholder="Gender" />
+                            </SelectTrigger>
+
+                            <SelectContent className="bg-slate-200">
+                              <SelectGroup>
+                                {gender.map((category: any, index: number) => (
+                                  <SelectItem
+                                    key={index}
+                                    value={category.value}
+                                    className="hover:cursor-pointer"
+                                  >
+                                    {category.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {form.watch("gender") && isEditMode && (
+                      <FormField
+                        control={form.control}
+                        name="size"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Size</FormLabel>
+                            <Select
+                              onValueChange={(value) => {
+                                field.onChange(value);
+                              }}
+                              value={field.value}
+                            >
+                              <SelectTrigger
+                                id="size"
+                                className="h-8 w-full rounded-md border px-2  font-normal"
+                              >
+                                <SelectValue placeholder="Size" />
+                              </SelectTrigger>
+
+                              <SelectContent className="bg-slate-200">
+                                <SelectGroup>
+                                  {form.watch("gender") === "men"
+                                    ? MEN_SIZES.map(
+                                        (category: any, index: number) => (
+                                          <SelectItem
+                                            key={index}
+                                            value={category}
+                                            className="hover:cursor-pointer"
+                                          >
+                                            {category}
+                                          </SelectItem>
+                                        ),
+                                      )
+                                    : WOMEN_SIZES.map(
+                                        (category: any, index: number) => (
+                                          <SelectItem
+                                            key={index}
+                                            value={category}
+                                            className="hover:cursor-pointer"
+                                          >
+                                            {category}
+                                          </SelectItem>
+                                        ),
+                                      )}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
+                    {form.watch("gender") && !isEditMode ? (
+                      <FormField
+                        control={form.control}
+                        name="size"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Size</FormLabel>
+
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  className="w-full justify-between h-8 font-normal"
+                                >
+                                  {field.value?.length > 0
+                                    ? field.value.join(", ")
+                                    : "Select size"}
+                                  <ChevronDown className="h-4 w-4 opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+
+                              <PopoverContent className="w-40 p-2">
+                                <div className="space-y-2">
+                                  {form.watch("gender") === "men" &&
+                                    MEN_SIZES.map((size) => (
+                                      <FormLabel
+                                        key={size}
+                                        className="flex items-center gap-2 cursor-pointer text-sm"
+                                      >
+                                        <InputField
+                                          type="checkbox"
+                                          checked={field.value?.includes(size)}
+                                          onChange={() => {
+                                            const current = field.value ?? [];
+                                            const updated = current.includes(
+                                              size,
+                                            )
+                                              ? current.filter(
+                                                  (s: string) => s !== size,
+                                                )
+                                              : [...current, size];
+
+                                            field.onChange(updated);
+                                          }}
+                                          className="h-4 w-4"
+                                        />
+                                        {size}
+                                      </FormLabel>
+                                    ))}
+                                  {form.watch("gender") === "women" &&
+                                    WOMEN_SIZES.map((size) => (
+                                      <label
+                                        key={size}
+                                        className="flex items-center gap-2 cursor-pointer text-sm"
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          checked={field.value?.includes(size)}
+                                          onChange={() => {
+                                            const current = field.value ?? [];
+                                            const updated = current.includes(
+                                              size,
+                                            )
+                                              ? current.filter(
+                                                  (s: string) => s !== size,
+                                                )
+                                              : [...current, size];
+
+                                            field.onChange(updated);
+                                          }}
+                                          className="h-4 w-4"
+                                        />
+                                        {size}
+                                      </label>
+                                    ))}
+                                </div>
+                              </PopoverContent>
+                            </Popover>
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    ) : (
+                      !isEditMode && (
+                        <FormItem>
+                          <FormLabel>Size</FormLabel>
+
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="w-full justify-between h-8 font-normal cursor-not-allowed"
+                              >
+                                Select size
+                                <ChevronDown className="h-4 w-4 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                          </Popover>
+                        </FormItem>
+                      )
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="bottom-10 right-10 flex justify-end gap-4 mt-5">

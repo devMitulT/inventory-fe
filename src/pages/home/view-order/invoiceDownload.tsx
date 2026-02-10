@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Banknote, Download, Loader, Mail, MapPin, Phone } from "lucide-react";
+import { Download, Loader, MapPin, Phone } from "lucide-react";
 import { formatStringDate, formatAddress } from "@/lib/utils";
 import CustomTable from "@/components/ui/Table";
 import { useGetBookingById } from "@/services/queries";
@@ -87,10 +87,6 @@ const InvoiceDownload = () => {
               {bookingData?.organizationId?.organizationName}
             </span>
             <div className="flex flex-col gap-1.5 text-xs font-medium text-[#000000]">
-              <div className="flex items-center gap-1">
-                <Mail size={14} />
-                {bookingData?.organizationId?.email || "No Email Found"}
-              </div>
               <div className="flex items-center gap-1 font-medium text-[#000000]">
                 <Phone size={13} />
                 {bookingData?.organizationId?.contactNumber
@@ -98,7 +94,7 @@ const InvoiceDownload = () => {
                   : "No Contact Number Found"}
               </div>
               <div className="flex items-center gap-1 font-medium text-[#000000]">
-                <Banknote size={13} />
+                GSTIN :{" "}
                 {bookingData?.organizationId?.gstNumber
                   ? `${bookingData.organizationId.gstNumber}`
                   : "No GST Number Found"}
@@ -128,9 +124,11 @@ const InvoiceDownload = () => {
             <div className="mb-1 text-base font-semibold leading-[18px] text-[#000000]">
               {bookingData?.customer?.customerName}
             </div>
-            <div className="text-xs font-medium">
-              {bookingData?.customer?.gstNumber}
-            </div>
+            {bookingData?.customer?.gstNumber && (
+              <div className="text-xs font-medium">
+                GSTIN : {bookingData?.customer?.gstNumber}
+              </div>
+            )}
           </div>
           <div className="text-xs">
             <div className="font-medium text-[#4D4D4D]">#Invoice</div>
@@ -189,39 +187,61 @@ const InvoiceDownload = () => {
                 })}
               </span>
             </div>
-            <div className="flex w-full flex-row justify-between">
-              <span className="text-sm font-medium text-[#4D4D4D]">CGST:</span>
-              <span className="flex items-center text-sm font-semibold text-[#E58E02]">
-                <span className="mr-[1px]">₹</span>
-                {(
-                  (bookingData?.amount -
-                    bookingData?.amount / (1 + bookingData?.gstRate / 100)) *
-                  0.5
-                )?.toLocaleString("en-IN", {
-                  maximumFractionDigits: 3,
-                })}
-              </span>
-            </div>
-            <div className="flex w-full flex-row justify-between">
-              <span className="text-sm font-medium text-[#4D4D4D]">SGST:</span>
-              <span className="flex items-center text-sm font-semibold text-[#E58E02]">
-                <span className="mr-[1px]">₹</span>
-                {(
-                  (bookingData?.amount -
-                    bookingData?.amount / (1 + bookingData?.gstRate / 100)) *
-                  0.5
-                )?.toLocaleString("en-IN", {
-                  maximumFractionDigits: 3,
-                })}
-              </span>
-            </div>
-            <div className="mb-2 flex w-full flex-row justify-between print:mb-0">
+            {bookingData?.gstRate > 0 && (
+              <div className="flex w-full flex-row justify-between">
+                <span className="text-sm font-medium text-[#4D4D4D]">
+                  CGST:
+                </span>
+                <span className="flex items-center text-sm font-semibold text-[#E58E02]">
+                  <span className="mr-[1px]">₹</span>
+                  {(
+                    (bookingData?.amount -
+                      bookingData?.amount / (1 + bookingData?.gstRate / 100)) *
+                    0.5
+                  )?.toLocaleString("en-IN", {
+                    maximumFractionDigits: 3,
+                  })}
+                </span>
+              </div>
+            )}
+            {bookingData?.gstRate > 0 && (
+              <div className="flex w-full flex-row justify-between">
+                <span className="text-sm font-medium text-[#4D4D4D]">
+                  SGST:
+                </span>
+                <span className="flex items-center text-sm font-semibold text-[#E58E02]">
+                  <span className="mr-[1px]">₹</span>
+                  {(
+                    (bookingData?.amount -
+                      bookingData?.amount / (1 + bookingData?.gstRate / 100)) *
+                    0.5
+                  )?.toLocaleString("en-IN", {
+                    maximumFractionDigits: 3,
+                  })}
+                </span>
+              </div>
+            )}
+            {Number(bookingData?.discountAmount) > 0 && (
+              <div className="flex w-full flex-row justify-between">
+                <span className="text-sm font-medium text-[#4D4D4D]">
+                  Discount:
+                </span>
+                <span className="flex items-center text-sm font-semibold text-green-500">
+                  <span className="mr-[1px]">- ₹</span>
+                  {Number(bookingData?.discountAmount).toFixed(2)}
+                </span>
+              </div>
+            )}
+            <div className="flex w-full flex-row justify-between print:mb-0">
               <span className="pb-1 text-sm font-medium text-[#4D4D4D] print:p-0">
                 Total:
               </span>
               <span className="flex items-center text-sm font-semibold text-[#000000]">
                 <span className="mr-[1px]">₹</span>
-                {(Number(bookingData?.amount) || 0).toLocaleString("en-IN", {
+                {(
+                  Number(bookingData?.amount) -
+                    Number(bookingData?.discountAmount) || 0
+                ).toLocaleString("en-IN", {
                   maximumFractionDigits: 3,
                 })}
               </span>

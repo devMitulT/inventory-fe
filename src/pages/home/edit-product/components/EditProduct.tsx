@@ -4,13 +4,8 @@ import BreadcrumbWrapper from "@/components/ui/Breadcrumb";
 import { ProductForm } from "@/components/product-form";
 
 const EditProduct = ({ product }: EditProductProps) => {
-  const {
-    form,
-    onSubmit,
-    isUpdatingProduct,
-    handleCancel,
-    watchDescription,
-  } = useEditProductDetails({ product });
+  const { form, onSubmit, isUpdatingProduct, handleCancel, watchDescription } =
+    useEditProductDetails({ product });
 
   return (
     <div>

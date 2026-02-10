@@ -1,0 +1,4 @@
+name,sku,description,perUnitCost,stock,thresholdStock,colour
+Cotton Fabric,CTN-MTR-01,Premium cotton fabric for clothing use,120,100,20,"Red,Blue,Green"
+Silk Fabric,SLK-MTR-02,High quality silk fabric smooth finish,350,50,10,"Blue,White"
+Denim Fabric,DNM-MTR-03,Durable denim fabric for jeans,250,80,15,"Black,Grey"

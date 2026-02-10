@@ -122,11 +122,13 @@ interface Product {
   name: string;
   description: string;
   perUnitCost: string | number;
-  colour: string;
+  colour?: string;
   sku: string;
   stock: number | string;
   thresholdStock: number | string;
   measurementType: string;
+  size?: string;
+  gender?: string;
 }
 
 interface updateProduct {
@@ -134,11 +136,13 @@ interface updateProduct {
   name: string;
   description: string;
   perUnitCost: string | number;
-  colour: string;
+  colour?: string;
   sku: string;
   stock: number | string;
   thresholdStock: number | string;
   measurementType: string;
+  size?: string;
+  gender?: string;
 }
 
 // tomorrow arrival product
@@ -275,6 +279,6 @@ interface OrganizationInfo {
 }
 
 interface CSVProps {
-  measurementType : string,
+  measurementType: string;
   csvFile: File;
 }

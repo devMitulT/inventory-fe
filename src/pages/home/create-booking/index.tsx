@@ -52,7 +52,7 @@ const CreateBookingPage = () => {
     cancelDelete,
   } = useCreatProductBooking();
   return (
-    <>
+    <div className="pb-12">
       <BreadcrumbWrapper
         routes={
           location?.state?.formType === "edit"
@@ -375,22 +375,19 @@ const CreateBookingPage = () => {
                         <FormLabel>GST Number (Billing to) </FormLabel>
                         <FormControl>
                           <InputField
-                            id="unit"
+                            id="gstNumber"
                             placeholder="GST Number"
                             className="resize-none bg-white"
                             type="string"
                             {...field}
                             value={field.value ?? ""} // fallback for undefined
-                            onChange={(e) =>
-                              field.onChange((e.target.value))
-                            }
+                            onChange={(e) => field.onChange(e.target.value)}
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  
 
                   <FormField
                     control={form.control}
@@ -400,8 +397,32 @@ const CreateBookingPage = () => {
                         <FormLabel>GST Rate %</FormLabel>
                         <FormControl>
                           <InputField
-                            id="unit"
+                            id="gstRate"
                             placeholder="GST Rate %"
+                            className="resize-none bg-white"
+                            type="number"
+                            {...field}
+                            value={field.value ?? ""} // fallback for undefined
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name={`discountAmount`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Discount Amount</FormLabel>
+                        <FormControl>
+                          <InputField
+                            id="discountAmount"
+                            placeholder="Discount Amount"
                             className="resize-none bg-white"
                             type="number"
                             {...field}
@@ -442,49 +463,63 @@ const CreateBookingPage = () => {
                         .toFixed(2)}
                     </span>
                   </div>
-                  <div className="flex flex-row justify-between px-4 py-[11px] text-sm font-medium hover:bg-[#FAFAFA]">
-                    <span id="deposit" className="pt-0.5">
-                      SGST
-                    </span>
-                    <span className="text-sm font-semibold text-[#E58E02]">
-                      ₹{" "}
-                      {(
-                        (form
-                          .getValues("products")
-                          ?.reduce(
-                            (sum, product) =>
-                              sum +
-                              Number(product?.perUnitCost ?? 0) *
-                                Number(product?.unit ?? 0),
-                            0,
-                          ) *
-                          Number(form.watch("gstRate") ?? 0)) /
-                        200
-                      ).toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="flex flex-row justify-between px-4 py-[11px] text-sm font-medium hover:bg-[#FAFAFA]">
-                    <span id="deposit" className="pt-0.5">
-                      CGST
-                    </span>
-                    <span className="text-sm font-semibold text-[#E58E02]">
-                      ₹{" "}
-                      {(
-                        (form
-                          .getValues("products")
-                          ?.reduce(
-                            (sum, product) =>
-                              sum +
-                              Number(product?.perUnitCost ?? 0) *
-                                Number(product?.unit ?? 0),
-                            0,
-                          ) *
-                          Number(form.watch("gstRate") ?? 0)) /
-                        200
-                      ).toFixed(2)}
-                    </span>
-                  </div>
-
+                  {Number(form.watch("gstRate")) > 0 && (
+                    <div className="flex flex-row justify-between px-4 py-[11px] text-sm font-medium hover:bg-[#FAFAFA]">
+                      <span id="deposit" className="pt-0.5">
+                        SGST
+                      </span>
+                      <span className="text-sm font-semibold text-[#E58E02]">
+                        ₹{" "}
+                        {(
+                          (form
+                            .getValues("products")
+                            ?.reduce(
+                              (sum, product) =>
+                                sum +
+                                Number(product?.perUnitCost ?? 0) *
+                                  Number(product?.unit ?? 0),
+                              0,
+                            ) *
+                            Number(form.watch("gstRate") ?? 0)) /
+                          200
+                        ).toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                  {Number(form.watch("gstRate")) > 0 && (
+                    <div className="flex flex-row justify-between px-4 py-[11px] text-sm font-medium hover:bg-[#FAFAFA]">
+                      <span id="deposit" className="pt-0.5">
+                        CGST
+                      </span>
+                      <span className="text-sm font-semibold text-[#E58E02]">
+                        ₹{" "}
+                        {(
+                          (form
+                            .getValues("products")
+                            ?.reduce(
+                              (sum, product) =>
+                                sum +
+                                Number(product?.perUnitCost ?? 0) *
+                                  Number(product?.unit ?? 0),
+                              0,
+                            ) *
+                            Number(form.watch("gstRate") ?? 0)) /
+                          200
+                        ).toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                  {Number(form.watch("discountAmount")) > 0 && (
+                    <div className="flex flex-row justify-between px-4 py-[11px] text-sm font-medium hover:bg-[#FAFAFA]">
+                      <span id="deposit" className="pt-0.5">
+                        Discount
+                      </span>
+                      <span className="text-sm font-semibold text-green-500">
+                        - ₹{" "}
+                        {Number(form.watch("discountAmount") ?? 0).toFixed(2)}
+                      </span>
+                    </div>
+                  )}
                   {/* Total Amount */}
                   <div className="flex flex-row justify-between bg-[#FAFAFA] px-4 py-[11px] text-sm font-medium hover:bg-[#FAFAFA]">
                     <span id="totalamount" className="pt-0.5">
@@ -512,7 +547,8 @@ const CreateBookingPage = () => {
                             0,
                           ) *
                           Number(form.watch("gstRate") ?? 0)) /
-                          100
+                          100 -
+                        Number(form.watch("discountAmount") ?? 0)
                       ).toFixed(2)}
                     </span>
                   </div>
@@ -550,7 +586,7 @@ const CreateBookingPage = () => {
           </form>
         </Form>
       </div>
-    </>
+    </div>
   );
 };
 

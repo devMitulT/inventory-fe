@@ -10,7 +10,7 @@ import {
 import BreadcrumbWrapper from "@/components/ui/Breadcrumb";
 import { Separator } from "@/components/ui/Separator/separator";
 import { ROUTES } from "@/constants";
-
+import { gender, measurementType } from "../add-product/constants";
 const ViewProductDetails = () => {
   const { isLoading, product, viewProductBreadCrumb } = useViewProductDetails();
 
@@ -78,14 +78,38 @@ const ViewProductDetails = () => {
                   {product?.sku}
                 </span>
               </div>
-              <div className="flex flex-col justify-between">
-                <span className="pb-1 text-sm font-normal text-[#4D4D4D]">
-                  Colour
-                </span>
-                <span className="rounded-md border bg-gray-100 px-4 py-[6.5px] text-sm font-medium">
-                  {product.colour}
-                </span>
-              </div>
+              {product?.measurementType === "meter" && (
+                <div className="flex flex-col justify-between">
+                  <span className="pb-1 text-sm font-normal text-[#4D4D4D]">
+                    Colour
+                  </span>
+                  <span className="rounded-md border bg-gray-100 px-4 py-[6.5px] text-sm font-medium">
+                    {product.colour}
+                  </span>
+                </div>
+              )}
+              {product?.measurementType === "piece" && (
+                <div className="flex flex-col justify-between">
+                  <span className="pb-1 text-sm font-normal text-[#4D4D4D]">
+                    Gender
+                  </span>
+                  <span className="rounded-md border bg-gray-100 px-4 py-[6.5px] text-sm font-medium">
+                    {gender.find((g) => g.value === product?.gender)?.label}
+                  </span>
+                </div>
+              )}
+
+              {product?.measurementType === "piece" && (
+                <div className="flex flex-col justify-between">
+                  <span className="pb-1 text-sm font-normal text-[#4D4D4D]">
+                    Size
+                  </span>
+                  <span className="rounded-md border bg-gray-100 px-4 py-[6.5px] text-sm font-medium">
+                    {product?.size}
+                  </span>
+                </div>
+              )}
+
               <div className="flex flex-col justify-between">
                 <span className="pb-1 text-sm font-normal text-[#4D4D4D]">
                   Stock
@@ -108,7 +132,11 @@ const ViewProductDetails = () => {
                   Measurment Type
                 </span>
                 <span className="rounded-md border bg-gray-100 px-4 py-[6.5px] text-sm font-medium">
-                  {product?.measurementType}
+                  {
+                    measurementType.find(
+                      (g) => g.value === product?.measurementType,
+                    )?.label
+                  }
                 </span>
               </div>
             </div>
