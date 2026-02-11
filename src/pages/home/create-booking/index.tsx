@@ -51,6 +51,9 @@ const CreateBookingPage = () => {
     confirmDelete,
     cancelDelete,
   } = useCreatProductBooking();
+  const onError = (errors: any) => {
+    console.log("Validation errors:", errors);
+  };
   return (
     <div className="pb-12">
       <BreadcrumbWrapper
@@ -63,7 +66,10 @@ const CreateBookingPage = () => {
 
       <div className="flex flex-col gap-4 px-6">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="gap-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit, onError)}
+            className="gap-4"
+          >
             <div className="grid grid-cols-[1.5fr_0.5fr] gap-6">
               <div className="flex flex-col gap-4">
                 <div className="grid grid-cols-3 gap-3 rounded-md bg-white p-4 pb-7">
@@ -201,9 +207,9 @@ const CreateBookingPage = () => {
                                 id="stock"
                                 disabled
                                 className="resize-none bg-white"
-                                value={`${Number(
-                                  watchProduct?.[index]?.stock,
-                                )}`}
+                                value={
+                                  Number(watchProduct?.[index]?.stock) || 0
+                                }
                               />
                             </FormControl>
                             <FormMessage />
@@ -250,7 +256,7 @@ const CreateBookingPage = () => {
                                 className="resize-none bg-white"
                                 type="number"
                                 {...field}
-                                value={field.value ?? ""} // fallback for undefined
+                                value={field.value ?? ""}
                                 onChange={(e) =>
                                   field.onChange(Number(e.target.value))
                                 }

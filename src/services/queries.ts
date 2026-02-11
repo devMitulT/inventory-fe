@@ -120,8 +120,8 @@ export const useCreateProduct = () => {
       description: string;
       perUnitCost: string | number;
       colour?: string[] | undefined;
-      size?:string[] | undefined;
-      gender?:string | undefined;
+      size?: string[] | undefined;
+      gender?: string | undefined;
       sku: string;
       stock: number | string;
       thresholdStock: number | string;
@@ -162,7 +162,7 @@ export const useArchivedProduct = () => {
 export const useGetArchivedProducts = (
   page: number,
   search: string,
-  status: string
+  status: string,
 ) => {
   return useQuery({
     queryKey: [KEYS.GET_ALL_PRODUCTS, "archived", page, search, status],
@@ -184,7 +184,7 @@ export const useGetOrders = (
       to: string;
     };
   },
-  enabled: boolean = true
+  enabled: boolean = true,
 ) => {
   return useQuery({
     queryKey: [KEYS.GET_ORDERS, page, primaryPhn, date],
@@ -226,12 +226,10 @@ export const useUpdateOrganization = () => {
   });
 };
 
-export const useGetNotifications = () => {
+export const useGetNotifications = (page: number) => {
   return useQuery({
-    queryKey: [KEYS.GET_ALL_NOTIFICATION],
-    queryFn: () => getNotifications(),
-    retry: false,
-    staleTime: 0,
+    queryKey: ["notifications", page],
+    queryFn: () => getNotifications(page),
   });
 };
 

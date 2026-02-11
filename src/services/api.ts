@@ -43,34 +43,9 @@ export const getOrderById = async (bid: string): Promise<any> => {
   return await request({ url: `/order/orders/${bid}` });
 };
 
-// export const createProductFromCSV = async (
-//   bodyData: CSVProps
-// ): Promise<any> => {
-//   const formData = new FormData();
-//   formData.append("gender", bodyData?.gender);
-//   formData.append("category", bodyData?.category);
-//   formData.append("csv", bodyData?.csvFile);
-//   try {
-//     const response = await request({
-//       url: `/product/create-product-from-csv`,
-//       method: "POST",
-//       data: formData,
-//       headers: {
-//         "Content-Type": "multipart/form-data",
-//       },
-//     });
-
-//     return response;
-//   } catch (error) {
-//     console.error("Error updating Csv File:", error);
-//     throw error;
-//   }
-// };
-
-//Product
 export const getProducts = async (
   page: number,
-  search: string
+  search: string,
 ): Promise<any> => {
   return await request({
     url: `/product/product?page=${page}&limit=10&sku=${search}`,
@@ -79,6 +54,7 @@ export const getProducts = async (
 
 export const searchProductBySku = async (sku: string): Promise<any> => {
   const response = await request({ url: `/product/product?sku=${sku}` });
+  console.log(response);
   return response.data;
 };
 
@@ -92,8 +68,8 @@ export const createProduct = async (bodyData: {
   perUnitCost: string | number;
   colour?: string[] | undefined;
   sku: string;
-  size?:string[] | undefined;
-  gender?:string | undefined;
+  size?: string[] | undefined;
+  gender?: string | undefined;
   stock: number | string;
   thresholdStock: number | string;
   measurementType: string;
@@ -106,7 +82,9 @@ export const createProduct = async (bodyData: {
   return response.data;
 };
 
-export const createProductFromCSV = async (bodyData: CSVProps): Promise<any> => {
+export const createProductFromCSV = async (
+  bodyData: CSVProps,
+): Promise<any> => {
   const formData = new FormData();
   formData.append("measurementType", bodyData?.measurementType);
   formData.append("csv", bodyData?.csvFile);
@@ -147,7 +125,7 @@ export const deleteProduct = async (bid: string): Promise<any> => {
 export const getArchivedProducts = async (
   page: number,
   search: string,
-  status: string = "archived"
+  status: string = "archived",
 ): Promise<any> => {
   const isDeleted = status === "archived";
   const url = `/product/product?page=${page}&limit=10&sku=${search}&isDeleted=${isDeleted}`;
@@ -165,7 +143,7 @@ export const archivedProduct = async (id: string): Promise<any> => {
 
 //Auth
 export const signIn = async (
-  credentials: SignInCredentials
+  credentials: SignInCredentials,
 ): Promise<SignInResponse> => {
   const response = await request<Response<SignInResponse>>({
     url: "/auth/login",
@@ -191,7 +169,7 @@ export const getOrganizationInfo = async (): Promise<any> => {
 };
 
 export const updateOrganization = async (
-  bodyData: OrganizationInfo
+  bodyData: OrganizationInfo,
 ): Promise<any> => {
   if (!bodyData || !bodyData.id) {
     throw new Error("Organization ID is missing or undefined");
@@ -229,6 +207,8 @@ export const updateOrganization = async (
   }
 };
 
-export const getNotifications = async (): Promise<any> => {
-  return await request({ url: `/notification/notifications` });
+export const getNotifications = async (page: number): Promise<any> => {
+  return await request({
+    url: `/notification/notifications?page=${page}&limit=5`,
+  });
 };

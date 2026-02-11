@@ -35,7 +35,6 @@ export const useCreatProductBooking = () => {
   const [conflicts, setConflicts] = useState([]);
   const [laundryConflict, setLaundryConflict] = useState([]);
   const [addError, setAddError] = useState("");
-
   const [imageErrors, setImageErrors] = React.useState<{
     [productId: string]: boolean;
   }>({});
@@ -72,7 +71,7 @@ export const useCreatProductBooking = () => {
             : initialData?.customer?.phoneNumberSecondary,
           amount: initialData?.text
             ? customerDetails?.[5]
-            : initialData?.amount.toString(),
+            : initialData?.amount?.toString(),
           gstNumber: initialData?.text
             ? customerDetails?.[6]
             : initialData?.customer?.gstNumber,
@@ -96,7 +95,7 @@ export const useCreatProductBooking = () => {
           amount: "",
           gstNumber: "",
           gstRate: "",
-          discountAmount: "",
+          discountAmount: 0,
         },
   });
   const { control } = form;
@@ -116,7 +115,6 @@ export const useCreatProductBooking = () => {
   const { mutateAsync: deleteBooking, isPending: isDeleting } =
     useDeleteBooking();
 
-  // Recalculate total when prices changes
   const handleDeleteBooking = async () => {
     try {
       const data = await deleteBooking(initialData?.id);

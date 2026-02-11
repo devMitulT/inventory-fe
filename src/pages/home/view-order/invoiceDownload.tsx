@@ -232,7 +232,7 @@ const InvoiceDownload = () => {
                 </span>
               </div>
             )}
-            <div className="flex w-full flex-row justify-between print:mb-0">
+            <div className=" flex w-full flex-row justify-between print:mb-0">
               <span className="pb-1 text-sm font-medium text-[#4D4D4D] print:p-0">
                 Total:
               </span>

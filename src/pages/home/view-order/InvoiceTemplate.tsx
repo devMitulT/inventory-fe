@@ -85,7 +85,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
 
       {/* Customer Info */}
       <div className="flex flex-col items-end  rounded-lg border p-[16px]">
-        <div className="items-between flex h-[59px] w-[730px] justify-between rounded-md">
+        <div className="items-between flex h-[59px] w-[730px] border-b justify-between rounded-md">
           <div className="h-[48px]">
             <div className="text-xs font-medium text-[#4D4D4D]">Billed To</div>
             <div className="mb-1 text-base font-semibold leading-[18px] text-[#000000]">
@@ -114,7 +114,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
         </div>
 
         {/* Table */}
-        <div className="mx-1 mt-[32px] flex min-h-[500px] w-[740px] justify-between text-[5px] print:min-h-[500px] print:w-[740px] [&_.table-container]:w-[740px] [&_.table-container]:!overflow-visible [&_.table-head]:w-auto [&_td]:pb-4 [&_td]:text-xs print:[&_td]:pb-1 [&_th]:pb-4 [&_th]:text-xs print:[&_th]:pb-1">
+        <div className="mx-1 mt-[32px] flex min-h-[500px] w-[720px] justify-between text-[5px] print:min-h-[500px] print:w-[720px] [&_.table-container]:w-[720px] [&_.table-container]:!overflow-visible [&_.table-head]:w-auto [&_td]:pb-4 [&_td]:text-xs print:[&_td]:pb-1 [&_th]:pb-4 [&_th]:text-xs print:[&_th]:pb-1">
           {allProductData.length > 0 ? (
             <CustomTable
               columns={columns}
