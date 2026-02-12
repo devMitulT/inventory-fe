@@ -91,16 +91,16 @@ const Products = () => {
               className="absolute bottom-[6px] left-2"
             />
           </div>
-          {selectedStatus !== "archived" && (
-            <Link to={ROUTES.ADD_PRODUCT}>
-              <Button
-                id="addProduct"
-                className="h-8 w-[128px] rounded-lg bg-black text-white hover:bg-black hover:text-white"
-              >
-                + Add Product
-              </Button>
-            </Link>
-          )}
+
+          <Link to={ROUTES.ADD_PRODUCT}>
+            <Button
+              id="addProduct"
+              className="h-8 w-[128px] rounded-lg bg-black text-white hover:bg-black hover:text-white"
+            >
+              + Add Product
+            </Button>
+          </Link>
+
           <Link to={ROUTES.IMPORT_PRODUCT}>
             <Button
               id="importProduct"

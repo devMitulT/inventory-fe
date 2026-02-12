@@ -10,10 +10,10 @@ import {
 } from "@radix-ui/react-tooltip";
 import Icons from "@/assets/icons";
 
-import { useReservedProducts } from "../reserved-products/hooks/useReservedProducts";
 import { formatStringDate } from "@/lib/utils";
 import CustomTable from "@/components/ui/Table";
 import InvoiceTemplate from "./InvoiceTemplate";
+import { useReservedProducts } from "../reserved-products/hooks/useReservedProducts";
 
 function ViewOrder() {
   const {
@@ -32,14 +32,12 @@ function ViewOrder() {
   const { setSelectedData, setSelectedProduct } = useReservedProducts();
 
   const now = new Date();
-  const earliestDate = new Date(
-    Math.min(
-      ...(bookingData?.data?.products || [])
-        .map((p: any) => new Date(p.deliveryDate))
-        .filter((d: any) => !isNaN(d)),
-    ),
-  );
-  const isDisable = earliestDate < now;
+  const createdAt = new Date(bookingData?.data?.createdAt);
+  const isSameDay =
+    now.getFullYear() === createdAt.getFullYear() &&
+    now.getMonth() === createdAt.getMonth() &&
+    now.getDate() === createdAt.getDate();
+
   return (
     <div className="mt-6 min-h-[777px]">
       <div className="flex h-[32px] items-center justify-between pr-6">
@@ -49,11 +47,13 @@ function ViewOrder() {
             id="shareWhatsapp"
             onClick={handleShareOnWhatsapp}
             type="button"
-            className="w-[211px] rounded-md border border-[#EDEDED] py-0 text-[14px] font-medium text-[#39AE41] hover:bg-gray-50"
+            variant={"outline"}
+            className="w-[211px] rounded-md border border-[#EDEDED] py-0 text-[14px] font-medium text-[#39AE41] hover:text-[#39AE41] hover:bg-gray-50"
           >
             <Icons.whatsapp />
             Share on Whatsapp
           </Button>
+
           <Button
             id="generatePrint"
             variant="outline"
@@ -68,7 +68,8 @@ function ViewOrder() {
             id="generatePdf"
             onClick={handleDownloadPDF}
             type="button"
-            className="h-8 w-[140px] rounded-md border border-[#EDEDED] text-[14px] font-medium text-[#1EB386] hover:bg-gray-50"
+            variant={"outline"}
+            className="h-8 w-[140px] rounded-md border border-[#EDEDED] text-[14px] font-medium text-[#1EB386] hover:text-[#1EB386] hover:bg-gray-50"
           >
             <Download size={24} />
             Download
@@ -82,7 +83,7 @@ function ViewOrder() {
               <span className="rounded-sm bg-[#F2F2F2] px-2 py-1.5 text-[16px] font-medium">
                 Invoice #&nbsp;{bookingData?.data?.invoiceNumber}
               </span>
-              {!isDisable && (
+              {isSameDay && (
                 <Tooltip>
                   <TooltipTrigger>
                     <Edit
@@ -124,9 +125,11 @@ function ViewOrder() {
                       </>
                     )}
                   </div>
-                  <div className="flex items-center gap-1.5 text-sm font-medium text-[#4D4D4D]">
-                    GSTIN : {bookingData?.data?.customer?.gstNumber}
-                  </div>
+                  {bookingData?.data?.customer?.gstNumber && (
+                    <div className="flex items-center gap-1.5 text-sm font-medium text-[#4D4D4D]">
+                      GSTIN : {bookingData?.data?.customer?.gstNumber}
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col items-start gap-1">
                   {/* Date Box */}

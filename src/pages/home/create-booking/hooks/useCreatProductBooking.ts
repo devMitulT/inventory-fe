@@ -78,6 +78,9 @@ export const useCreatProductBooking = () => {
           discountAmount: initialData?.text
             ? customerDetails?.[7]
             : initialData?.discountAmount,
+          discountType: initialData?.text
+            ? customerDetails?.[8]
+            : initialData?.discountType,
         }
       : {
           products: [
@@ -95,7 +98,8 @@ export const useCreatProductBooking = () => {
           amount: "",
           gstNumber: "",
           gstRate: "",
-          discountAmount: 0,
+          discountAmount: "",
+          discountType: "flat",
         },
   });
   const { control } = form;
@@ -114,6 +118,22 @@ export const useCreatProductBooking = () => {
 
   const { mutateAsync: deleteBooking, isPending: isDeleting } =
     useDeleteBooking();
+  const calculateProductTotal = () => {
+    return (
+      form
+        .watch("products")
+        ?.reduce(
+          (sum, product) =>
+            sum + Number(Number(product?.perUnitCost) * Number(product?.unit)),
+          0,
+        ) || 0
+    );
+  };
+
+  const finalDiscount =
+    form.watch("discountType") === "percentage"
+      ? Number(form.watch("discountAmount")) * calculateProductTotal() * 0.01
+      : Number(form.watch("discountAmount"));
 
   const handleDeleteBooking = async () => {
     try {
@@ -169,6 +189,7 @@ export const useCreatProductBooking = () => {
           id: initialData?.id || initialData?._id || "",
           products: formateProducts,
           amount: totalAmount,
+          discountAmount: finalDiscount,
         });
 
         toast({
@@ -225,6 +246,7 @@ export const useCreatProductBooking = () => {
           id: initialData?.id || "",
           products: formateProducts,
           amount: totalAmount,
+          discountAmount: finalDiscount,
         });
 
         toast({
@@ -401,6 +423,75 @@ export const useCreatProductBooking = () => {
     return `${day}-${month}-${year}`;
   };
 
+  const handleDiscountChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: any,
+  ) => {
+    const value = e.target.value;
+
+    if (/^\d{0,5}$/.test(value)) {
+      field.onChange(e);
+    }
+  };
+
+  useEffect(() => {
+    if (initialData?.discountType === "percentage") {
+      const convertedDiscount = (
+        (Number(initialData?.discountAmount) /
+          Number(
+            form
+              .getValues("products")
+              ?.reduce(
+                (sum, product) =>
+                  sum +
+                  Number(product?.perUnitCost ?? 0) *
+                    Number(product?.unit ?? 0),
+                0,
+              ),
+          )) *
+        100
+      ).toFixed(0);
+
+      form.setValue("discountAmount", convertedDiscount);
+    }
+  }, [initialData]);
+
+  const calculateTotal = () => {
+    const products = form.getValues("products") || [];
+    const gstRate = Number(form.watch("gstRate") ?? 0);
+    const discountType = form.watch("discountType");
+    const discountAmount = Number(form.watch("discountAmount") ?? 0);
+
+    const subtotal = products.reduce((sum, product) => {
+      const price = Number(product?.perUnitCost ?? 0);
+      const qty = Number(product?.unit ?? 0);
+      return sum + price * qty;
+    }, 0);
+
+    const gstAmount = (subtotal * gstRate) / 100;
+
+    let discount = 0;
+
+    if (discountType === "flat") {
+      discount = discountAmount;
+    }
+
+    if (discountType === "percentage") {
+      discount = (subtotal * discountAmount) / 100;
+    }
+
+    const total = subtotal + gstAmount - discount;
+
+    return {
+      subtotal :  subtotal > 0 ? subtotal.toFixed(2) : "0.00",
+      total: total > 0 ? total.toFixed(2) : "0.00",
+      gstAmount: gstAmount > 0 ? gstAmount.toFixed(2) : "0.00",
+      discount: discount > 0 ? discount.toFixed(2) : "0.00",
+    };
+  };
+
+  const finalTotalDisplay = calculateTotal();
+
   return {
     formType,
     form,
@@ -444,5 +535,7 @@ export const useCreatProductBooking = () => {
     setImageErrors,
     editBookingBreadScrum,
     addError,
+    handleDiscountChange,
+    finalTotalDisplay,
   };
 };

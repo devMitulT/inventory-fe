@@ -2,7 +2,11 @@ import { ROUTES } from "@/constants";
 import { Edit, Eye, Trash2 } from "lucide-react";
 import { useReservedProducts } from "../../reserved-products/hooks/useReservedProducts";
 import { Link } from "react-router-dom";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@radix-ui/react-tooltip";
 import { formatINR } from "@/lib/utils";
 
 export const ordersColums = (handleOrder: (id: string) => void) => {
@@ -30,7 +34,9 @@ export const ordersColums = (handleOrder: (id: string) => void) => {
       accessor: "customer.customerName",
       renderCell: (value: string) => (
         <Tooltip>
-          <TooltipTrigger>{value.length > 20 ? `${value.slice(0, 20)}...` : value}</TooltipTrigger>
+          <TooltipTrigger>
+            {value.length > 20 ? `${value.slice(0, 20)}...` : value}
+          </TooltipTrigger>
           {value.length > 20 && (
             <TooltipContent className="rounded-md bg-gray-800 p-2 text-xs text-white">
               {value}
@@ -59,17 +65,16 @@ export const ordersColums = (handleOrder: (id: string) => void) => {
       accessor: "actions",
       renderCell: (_: any, rowData: any) => {
         const now = new Date();
-        const earliestDate = new Date(
-          Math.min(
-            ...rowData?.products
-              .map((p: any) => new Date(p.deliveryDate))
-              .filter((d: any) => !isNaN(d))
-          )
-        );
-        const isDisable = earliestDate < now;
+        const createdAt = new Date(rowData?.createdAt);
+        const isSameDay =
+          now.getFullYear() === createdAt.getFullYear() &&
+          now.getMonth() === createdAt.getMonth() &&
+          now.getDate() === createdAt.getDate();
         return (
           <div className="flex w-[80px] gap-2.5">
-            <Link to={`${ROUTES.VIEW_ORDER.replace(":id", rowData._id as string)}`}>
+            <Link
+              to={`${ROUTES.VIEW_ORDER.replace(":id", rowData._id as string)}`}
+            >
               <Tooltip>
                 <TooltipTrigger>
                   <Eye
@@ -86,7 +91,7 @@ export const ordersColums = (handleOrder: (id: string) => void) => {
                 </TooltipContent>
               </Tooltip>
             </Link>
-            {!isDisable && (
+            {isSameDay && (
               <>
                 <Tooltip>
                   <TooltipTrigger>
