@@ -238,6 +238,8 @@ interface ProductBooking {
   updatedAt?: string;
   discountAmount?: string | number;
   discountType?: string;
+  businessGstNumber: string;
+
   __v?: number;
 }
 

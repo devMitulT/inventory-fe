@@ -19,6 +19,7 @@ import {
 import { ROUTES } from "@/constants";
 import useDebounce from "@/hooks/useDebounce";
 import { CustomError } from "@/lib/axios-utils";
+import { useProfile } from "@/pages/auth/profile/hooks/useProfile";
 
 export const useCreatProductBooking = () => {
   // Inside your component
@@ -44,6 +45,7 @@ export const useCreatProductBooking = () => {
   const customerDetails = initialData?.text
     ? initialData?.text.split("\n").map((part: any) => part.trim()) || ["", ""]
     : "";
+  const { userData } = useProfile();
 
   const form = useForm<z.infer<typeof productBookingSchema>>({
     resolver: zodResolver(productBookingSchema),
@@ -81,6 +83,7 @@ export const useCreatProductBooking = () => {
           discountType: initialData?.text
             ? customerDetails?.[8]
             : initialData?.discountType,
+          businessGstNumber: userData?.data?.gstNumber,
         }
       : {
           products: [
@@ -100,6 +103,7 @@ export const useCreatProductBooking = () => {
           gstRate: "",
           discountAmount: "",
           discountType: "flat",
+          businessGstNumber: userData?.data?.gstNumber,
         },
   });
   const { control } = form;
@@ -190,6 +194,7 @@ export const useCreatProductBooking = () => {
           products: formateProducts,
           amount: totalAmount,
           discountAmount: finalDiscount,
+          businessGstNumber: userData.data.gstNumber,
         });
 
         toast({
@@ -247,6 +252,7 @@ export const useCreatProductBooking = () => {
           products: formateProducts,
           amount: totalAmount,
           discountAmount: finalDiscount,
+          businessGstNumber: userData.data.gstNumber,
         });
 
         toast({
@@ -483,7 +489,7 @@ export const useCreatProductBooking = () => {
     const total = subtotal + gstAmount - discount;
 
     return {
-      subtotal :  subtotal > 0 ? subtotal.toFixed(2) : "0.00",
+      subtotal: subtotal > 0 ? subtotal.toFixed(2) : "0.00",
       total: total > 0 ? total.toFixed(2) : "0.00",
       gstAmount: gstAmount > 0 ? gstAmount.toFixed(2) : "0.00",
       discount: discount > 0 ? discount.toFixed(2) : "0.00",
