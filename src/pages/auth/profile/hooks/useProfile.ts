@@ -269,5 +269,6 @@ export const useProfile = () => {
     confirmRuleDelete,
     cancelRuleDelete,
     requestNewRuleDelete,
+    userData,
   };
 };

@@ -69,6 +69,18 @@ export const productBookingSchema = z
           message: "Invalid GST number",
         },
       ),
+    businessGstNumber: z
+      .string()
+      .trim()
+      .optional()
+      .refine(
+        (val) =>
+          !val ||
+          /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(val),
+        {
+          message: "Invalid Business GST number",
+        },
+      ),
     discountAmount: z.union([z.string(), z.number()]),
     discountType: z
       .string({
@@ -140,14 +152,39 @@ export const productBookingSchema = z
   )
   .refine(
     (data) => {
+      if (data.businessGstNumber) {
+        return data?.gstNumber;
+      }
+      return true;
+    },
+    {
+      message:
+        "A business GST number is required in the organization profile to generate a GST invoice.",
+      path: ["gstNumber"],
+    },
+  )
+  .refine(
+    (data) => {
       if (data.gstNumber) {
         return data?.gstRate;
       }
       return true;
     },
     {
-      message: "Please provide the GST rate when a GSTIN is added",
+      message: "Please provide the GST rate when a GST number is added",
       path: ["gstRate"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.gstRate) {
+        return data?.gstNumber;
+      }
+      return true;
+    },
+    {
+      message: "Please provide the GST number when a GST rate is added",
+      path: ["gstNumber"],
     },
   );
 export const createBookingBreadScrum = ["Home", "Create Booking"];
