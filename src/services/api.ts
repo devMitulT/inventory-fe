@@ -19,7 +19,7 @@ export const updateBooking = async (bodyData: ProductBooking): Promise<any> => {
 };
 
 export const deleteBooking = async (bid: string | undefined): Promise<any> => {
-  return request({ url: `/order/order/${bid}`, method: "DELETE" });
+  return request({ url: `/order/orders/${bid}`, method: "DELETE" });
 };
 
 export const getOrders = async ({
@@ -54,7 +54,6 @@ export const getProducts = async (
 
 export const searchProductBySku = async (sku: string): Promise<any> => {
   const response = await request({ url: `/product/product?sku=${sku}` });
-  console.log(response);
   return response.data;
 };
 

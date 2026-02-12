@@ -236,6 +236,8 @@ interface ProductBooking {
   organizationId?: string;
   createdAt?: string;
   updatedAt?: string;
+  discountAmount?: string | number;
+  discountType?: string;
   __v?: number;
 }
 

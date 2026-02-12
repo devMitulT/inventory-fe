@@ -22,6 +22,11 @@ export interface Products {
   category: string;
   sku: string;
 }
+const calculateTotalAmount = (products: any[]) =>
+  products.reduce(
+    (acc, item) => acc + Number(item.perUnitCost) * Number(item.unit),
+    0,
+  );
 
 export const productBookingSchema = z
   .object({
@@ -31,8 +36,11 @@ export const productBookingSchema = z
           productName: z.string().nonempty("Product Name is required."),
           productId: z.string().nonempty("Product ID is required."),
           perUnitCost: z.union([z.number(), z.string().min(1, "")]),
-          unit: z.union([z.number(), z.string().min(1, "")]),
-          stock: z.union([z.number(), z.string().min(1, "")]),
+          unit: z.union([
+            z.number().min(1, "Atleast one unit is required"),
+            z.string().min(1, "Product Unit is required"),
+          ]),
+          stock: z.union([z.number(), z.string()]),
         }),
       )
       .min(1, "At least one product is required."),
@@ -61,9 +69,15 @@ export const productBookingSchema = z
           message: "Invalid GST number",
         },
       ),
-    discountAmount: z
-      .number()
-      .min(0, "Discount amount must be greater than 0."),
+    discountAmount: z.union([z.string(), z.number()]),
+    discountType: z
+      .string({
+        required_error: "Discount Type is required.",
+      })
+
+      .refine((val) => ["percentage", "flat"].includes(val), {
+        message: "Discount Type is required.",
+      }),
     gstRate: z.coerce
       .number({
         required_error: "GST Rate is required",
@@ -84,12 +98,56 @@ export const productBookingSchema = z
   )
   .refine(
     (data) => {
+      if (
+        data.discountType === "flat" &&
+        Number(data?.products[0]?.unit) > 0 &&
+        Number(data.discountAmount) < 0
+      ) {
+        const discount = Number(data.discountAmount);
+        const amount = calculateTotalAmount(data.products);
+
+        return discount < amount;
+      }
+      return true;
+    },
+    {
+      message: "Discount ₹ must be less than total amount.",
+      path: ["discountAmount"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.discountType === "percentage") {
+        const discount = Number(data.discountAmount);
+        return discount >= 0 && discount <= 100;
+      }
+      return true;
+    },
+    {
+      message: "Discount % must be between 0 and 100.",
+      path: ["discountAmount"],
+    },
+  )
+  .refine(
+    (data) => {
       if (!data.amount) return true;
-      return Number(data.amount) >= data.discountAmount;
+      return Number(data.amount) >= Number(data.discountAmount);
     },
     {
       message: "Discount must be less than total amount.",
       path: ["discountAmount"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.gstNumber) {
+        return data?.gstRate;
+      }
+      return true;
+    },
+    {
+      message: "Please provide the GST rate when a GSTIN is added",
+      path: ["gstRate"],
     },
   );
 export const createBookingBreadScrum = ["Home", "Create Booking"];

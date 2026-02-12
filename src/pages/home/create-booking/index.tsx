@@ -22,6 +22,7 @@ import BreadcrumbWrapper from "@/components/ui/Breadcrumb";
 import { Combobox } from "@/components/ui/Combobox";
 import { Plus } from "lucide-react";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const CreateBookingPage = () => {
   const {
@@ -50,6 +51,8 @@ const CreateBookingPage = () => {
     showModal,
     confirmDelete,
     cancelDelete,
+    handleDiscountChange,
+    finalTotalDisplay,
   } = useCreatProductBooking();
   const onError = (errors: any) => {
     console.log("Validation errors:", errors);
@@ -117,23 +120,21 @@ const CreateBookingPage = () => {
                     )}
                   />
 
-                  {/* Alternate Number */}
                   <FormField
                     control={form.control}
-                    name="phoneNumberSecondary"
+                    name={`gstNumber`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Alternate No.</FormLabel>
+                        <FormLabel>GSTIN (Billing to) </FormLabel>
                         <FormControl>
                           <InputField
-                            id="phoneNumberSecondary"
-                            placeholder="Alternate No."
-                            type="tel"
-                            className="h-8 resize-none bg-white"
-                            maxLength={10}
-                            onKeyDown={allowOnlyNumbers}
-                            onPaste={handleNumberPaste}
+                            id="gstNumber"
+                            placeholder="GST Number"
+                            className="resize-none bg-white"
+                            type="string"
                             {...field}
+                            value={field.value ?? ""}
+                            onChange={(e) => field.onChange(e.target.value)}
                           />
                         </FormControl>
                         <FormMessage />
@@ -143,7 +144,7 @@ const CreateBookingPage = () => {
                 </div>
                 {productsFields.map((item, index) => (
                   <div
-                    className="relative grid grid-cols-4 gap-2 rounded-md bg-white p-4"
+                    className="relative grid grid-cols-4 gap-2 rounded-md bg-white p-4 pb-6"
                     key={item.id}
                   >
                     {/* Product Selection */}
@@ -212,7 +213,6 @@ const CreateBookingPage = () => {
                                 }
                               />
                             </FormControl>
-                            <FormMessage />
                           </FormItem>
                         )}
                       />
@@ -252,6 +252,7 @@ const CreateBookingPage = () => {
                             <FormLabel>Unit</FormLabel>
                             <FormControl>
                               <InputField
+                                disabled={!form.watch("products")[0].productId}
                                 id="unit"
                                 className="resize-none bg-white"
                                 type="number"
@@ -373,27 +374,6 @@ const CreateBookingPage = () => {
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name={`gstNumber`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>GST Number (Billing to) </FormLabel>
-                        <FormControl>
-                          <InputField
-                            id="gstNumber"
-                            placeholder="GST Number"
-                            className="resize-none bg-white"
-                            type="string"
-                            {...field}
-                            value={field.value ?? ""} // fallback for undefined
-                            onChange={(e) => field.onChange(e.target.value)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
 
                   <FormField
                     control={form.control}
@@ -408,7 +388,7 @@ const CreateBookingPage = () => {
                             className="resize-none bg-white"
                             type="number"
                             {...field}
-                            value={field.value ?? ""} // fallback for undefined
+                            value={field.value ?? ""}
                             onChange={(e) =>
                               field.onChange(Number(e.target.value))
                             }
@@ -421,24 +401,57 @@ const CreateBookingPage = () => {
 
                   <FormField
                     control={form.control}
-                    name={`discountAmount`}
+                    name="discountType"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Discount Amount</FormLabel>
+                        <FormLabel>Discount Type</FormLabel>
+                        <Tabs
+                          value={field.value}
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            form.setValue("discountAmount", "");
+                          }}
+                        >
+                          <TabsList className="mb-2 w-full">
+                            <TabsTrigger value="flat" className="w-1/2">
+                              Flat (₹)
+                            </TabsTrigger>
+                            <TabsTrigger value="percentage" className="w-1/2">
+                              Percentage (%)
+                            </TabsTrigger>
+                          </TabsList>
+                        </Tabs>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="discountAmount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Discount (
+                          {form.watch("discountType") === "flat" ? "₹" : "%"})
+                        </FormLabel>
                         <FormControl>
                           <InputField
-                            id="discountAmount"
-                            placeholder="Discount Amount"
-                            className="resize-none bg-white"
-                            type="number"
-                            {...field}
-                            value={field.value ?? ""} // fallback for undefined
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
+                            data-testid="discountAmount"
+                            placeholder={
+                              form.watch("discountType") === "flat"
+                                ? "Enter discount ₹ "
+                                : "Enter discount %"
                             }
+                            type="number"
+                            className="h-8 resize-none bg-white"
+                            maxLength={5}
+                            {...field}
+                            onChange={(e) => handleDiscountChange(e, field)}
+                            onKeyDown={allowOnlyNumbers}
+                            onPaste={handleNumberPaste}
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage data-testid="discount" />
                       </FormItem>
                     )}
                   />
@@ -456,17 +469,7 @@ const CreateBookingPage = () => {
                       Amount
                     </span>
                     <span className="text-sm font-semibold text-black">
-                      ₹{"   "}
-                      {form
-                        .getValues("products")
-                        ?.reduce(
-                          (sum, product) =>
-                            sum +
-                            Number(product?.perUnitCost ?? 0) *
-                              Number(product?.unit),
-                          0,
-                        )
-                        .toFixed(2)}
+                      ₹ {Number(finalTotalDisplay.subtotal).toFixed(2)}
                     </span>
                   </div>
                   {Number(form.watch("gstRate")) > 0 && (
@@ -475,20 +478,7 @@ const CreateBookingPage = () => {
                         SGST
                       </span>
                       <span className="text-sm font-semibold text-[#E58E02]">
-                        ₹{" "}
-                        {(
-                          (form
-                            .getValues("products")
-                            ?.reduce(
-                              (sum, product) =>
-                                sum +
-                                Number(product?.perUnitCost ?? 0) *
-                                  Number(product?.unit ?? 0),
-                              0,
-                            ) *
-                            Number(form.watch("gstRate") ?? 0)) /
-                          200
-                        ).toFixed(2)}
+                        ₹ {(Number(finalTotalDisplay.gstAmount) / 2).toFixed(2)}
                       </span>
                     </div>
                   )}
@@ -498,20 +488,7 @@ const CreateBookingPage = () => {
                         CGST
                       </span>
                       <span className="text-sm font-semibold text-[#E58E02]">
-                        ₹{" "}
-                        {(
-                          (form
-                            .getValues("products")
-                            ?.reduce(
-                              (sum, product) =>
-                                sum +
-                                Number(product?.perUnitCost ?? 0) *
-                                  Number(product?.unit ?? 0),
-                              0,
-                            ) *
-                            Number(form.watch("gstRate") ?? 0)) /
-                          200
-                        ).toFixed(2)}
+                        ₹ {(Number(finalTotalDisplay.gstAmount) / 2).toFixed(2)}
                       </span>
                     </div>
                   )}
@@ -521,8 +498,7 @@ const CreateBookingPage = () => {
                         Discount
                       </span>
                       <span className="text-sm font-semibold text-green-500">
-                        - ₹{" "}
-                        {Number(form.watch("discountAmount") ?? 0).toFixed(2)}
+                        - ₹ {Number(finalTotalDisplay.discount).toFixed(2)}
                       </span>
                     </div>
                   )}
@@ -532,30 +508,7 @@ const CreateBookingPage = () => {
                       Total
                     </span>
                     <span className="text-sm font-semibold text-[#000000]">
-                      ₹{" "}
-                      {(
-                        form
-                          .getValues("products")
-                          ?.reduce(
-                            (sum, product) =>
-                              sum +
-                              Number(product?.perUnitCost ?? 0) *
-                                Number(product?.unit ?? 0),
-                            0,
-                          ) +
-                        (form
-                          .getValues("products")
-                          ?.reduce(
-                            (sum, product) =>
-                              sum +
-                              Number(product?.perUnitCost ?? 0) *
-                                Number(product?.unit ?? 0),
-                            0,
-                          ) *
-                          Number(form.watch("gstRate") ?? 0)) /
-                          100 -
-                        Number(form.watch("discountAmount") ?? 0)
-                      ).toFixed(2)}
+                      ₹ {finalTotalDisplay.total}
                     </span>
                   </div>
                 </div>
