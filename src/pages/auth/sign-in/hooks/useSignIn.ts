@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Utils
 import { useSignIn } from "@/services/queries";
@@ -10,12 +11,13 @@ import { useToast } from "@/hooks/use-toast";
 
 // Constants
 import { initialSignInValues, UserSignInFormSchema } from "../constants";
-import { accessToken, getAccessToken } from "@/lib/utils";
+import { accessToken, getAccessToken, userInfo } from "@/lib/utils";
 import { ROUTES } from "@/constants";
 
 export const useUserSignIn = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const isAuthorized = getAccessToken();
   const [loadingUser, setLoadingUser] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -32,10 +34,11 @@ export const useUserSignIn = () => {
   const handleSignIn = async (value: z.infer<typeof UserSignInFormSchema>) => {
     try {
       const data = await signIn(value);
-      // set the access token in localstorage
+      // wipe any cached data from a previous session before storing the new token
+      queryClient.clear();
+      // set the access token + user in localstorage
       localStorage.setItem(accessToken, data.token);
-
-      // store the user data in the context
+      localStorage.setItem(userInfo, JSON.stringify(data.user));
 
       navigate(ROUTES.HOME);
     } catch (error: unknown) {

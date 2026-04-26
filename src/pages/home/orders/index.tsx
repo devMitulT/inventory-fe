@@ -7,6 +7,14 @@ import { Button } from "@/components/ui/Button";
 import { format } from "date-fns";
 import { allowOnlyNumbers, cn, handleNumberPaste } from "@/lib/utils";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
 
 const Orders = () => {
   const {
@@ -22,6 +30,10 @@ const Orders = () => {
     orderDelete,
     isBookingDeleting,
     handleOrder,
+    isSuper,
+    orgUserOptions,
+    billedBy,
+    handleBilledByChange,
   } = useOrders();
   return (
     <div>
@@ -43,6 +55,37 @@ const Orders = () => {
             />
             <Search size={20} opacity={0.5} className="relative bottom-[26px] left-2" />
           </div>
+          {isSuper && (
+            <div>
+              <Select
+                value={billedBy === "" ? "__all__" : billedBy}
+                onValueChange={handleBilledByChange}
+              >
+                <SelectTrigger
+                  id="billedByFilter"
+                  className="h-8 w-[200px] rounded-md border bg-white px-2 font-medium"
+                >
+                  <SelectValue placeholder="Billed By: All" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectGroup>
+                    <SelectItem value="__all__" className="hover:cursor-pointer">
+                      All
+                    </SelectItem>
+                    {orgUserOptions.map((opt) => (
+                      <SelectItem
+                        key={opt.value}
+                        value={opt.value}
+                        className="hover:cursor-pointer"
+                      >
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div>
             <DatePicker
               month={new Date()}

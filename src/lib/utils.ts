@@ -22,6 +22,32 @@ export const getUserProfileInfo = () => {
   return localStorage.getItem(userprofileInfo);
 };
 
+export const getCurrentUser = (): {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  mobileNumber?: string;
+  organizationId: string;
+} | null => {
+  const raw = localStorage.getItem(userInfo);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+};
+
+export const getCurrentUserRole = (): string | null => {
+  const user = getCurrentUser();
+  return user ? user.role : null;
+};
+
+export const isSuperAdmin = (): boolean => {
+  return getCurrentUserRole() === "superAdmin";
+};
+
 export function getTodayDate() {
   const today = new Date(); // Get current local date
   today.setHours(0, 0, 0, 0); // Reset time to midnight

@@ -1,5 +1,5 @@
 import BreadcrumbWrapper from "@/components/ui/Breadcrumb";
-import { Download, Edit, Printer } from "lucide-react";
+import { Copy, Download, Edit, Printer } from "lucide-react";
 import { viewOrderBreadCrumb } from "./constants";
 import { Button } from "@/components/ui/Button";
 import { useViewOrder } from "./hooks/useViewOrder";
@@ -24,6 +24,7 @@ function ViewOrder() {
     isBookingLoading,
     invoiceRef,
     handleShareOnWhatsapp,
+    handleCopyInvoice,
     handleDownloadPDF,
     handlePrint,
     logoBlobUrl,
@@ -52,6 +53,17 @@ function ViewOrder() {
           >
             <Icons.whatsapp />
             Share on Whatsapp
+          </Button>
+
+          <Button
+            id="copyInvoice"
+            onClick={handleCopyInvoice}
+            type="button"
+            variant="outline"
+            className="h-8 w-[110px] rounded-md border border-[#EDEDED] text-[14px] font-medium hover:bg-gray-50"
+          >
+            <Copy size={20} />
+            Copy
           </Button>
 
           <Button

@@ -14,8 +14,10 @@ import { FormField, FormItem } from "@/contexts/FormContexts";
 import { InputField } from "@/components/ui/Input";
 import { useRef } from "react";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import { isSuperAdmin } from "@/lib/utils";
 
 const Profile = () => {
+  const canEdit = isSuperAdmin();
   const {
     form,
     isLoading,
@@ -60,14 +62,16 @@ const Profile = () => {
       <Form {...form}>
         <div className="flex items-center justify-between">
           <BreadcrumbWrapper routes={breadCrumbData} />
-          <Button
-            id="save"
-            onClick={handleUpdate}
-            disabled={updatingProfile}
-            className={`mx-6 h-8 w-[128px] rounded-lg bg-[#000000] py-2 text-sm font-medium text-white hover:bg-[#000000] hover:text-white`}
-          >
-            {updatingProfile ? "Saving..." : "Save"}
-          </Button>
+          {canEdit && (
+            <Button
+              id="save"
+              onClick={handleUpdate}
+              disabled={updatingProfile}
+              className={`mx-6 h-8 w-[128px] rounded-lg bg-[#000000] py-2 text-sm font-medium text-white hover:bg-[#000000] hover:text-white`}
+            >
+              {updatingProfile ? "Saving..." : "Save"}
+            </Button>
+          )}
         </div>
 
         {/* Profile Inputs */}
@@ -92,23 +96,27 @@ const Profile = () => {
                     </span>
                   </div>
                 )}
-                <label
-                  htmlFor="profile-image-upload"
-                  className="absolute bottom-0 right-1 cursor-pointer rounded-full border border-[#FFFFFF] bg-[#FFFFFF] p-1 shadow-xl"
-                >
-                  <Icons.CameraIcon
-                    width={23}
-                    height={23}
-                    className="text-[#000000]"
-                  />
-                </label>
-                <input
-                  type="file"
-                  id="profile-image-upload"
-                  accept="image/jpeg, image/png, image/jpg"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
+                {canEdit && (
+                  <>
+                    <label
+                      htmlFor="profile-image-upload"
+                      className="absolute bottom-0 right-1 cursor-pointer rounded-full border border-[#FFFFFF] bg-[#FFFFFF] p-1 shadow-xl"
+                    >
+                      <Icons.CameraIcon
+                        width={23}
+                        height={23}
+                        className="text-[#000000]"
+                      />
+                    </label>
+                    <input
+                      type="file"
+                      id="profile-image-upload"
+                      accept="image/jpeg, image/png, image/jpg"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </>
+                )}
               </div>
               {profileImageError && (
                 <span className="mt-2 max-w-[124px] text-center text-xs font-medium text-red-500">
@@ -130,6 +138,8 @@ const Profile = () => {
                         <InputField
                           id="organizationName"
                           placeholder="Organization Name"
+                          disabled={!canEdit}
+                          readOnly={!canEdit}
                           {...field}
                           onBlur={(e) => {
                             field.onBlur();
@@ -155,6 +165,8 @@ const Profile = () => {
                         <InputField
                           id="ownerName"
                           placeholder="Owner Name"
+                          disabled={!canEdit}
+                          readOnly={!canEdit}
                           {...field}
                           onBlur={(e) => {
                             field.onBlur();
@@ -181,6 +193,8 @@ const Profile = () => {
                           id="description"
                           className="h-12 rounded-lg border px-2 pb-5 text-sm font-medium"
                           placeholder="Description"
+                          disabled={!canEdit}
+                          readOnly={!canEdit}
                           {...field}
                         />
                       </FormControl>
@@ -204,6 +218,8 @@ const Profile = () => {
                           id="address"
                           className="h-12 rounded-lg border px-2 pb-5 text-sm font-medium"
                           placeholder="Address"
+                          disabled={!canEdit}
+                          readOnly={!canEdit}
                           {...field}
                         />
                       </FormControl>
@@ -226,6 +242,8 @@ const Profile = () => {
                         <InputField
                           id="gstNumber"
                           placeholder="GST Number (GSTIN)"
+                          disabled={!canEdit}
+                          readOnly={!canEdit}
                           {...field}
                           onBlur={(e) => {
                             field.onBlur();
@@ -265,9 +283,11 @@ const Profile = () => {
                       type="text"
                       value={rule}
                       onChange={(e) => handleRuleChange(idx, e.target.value)}
+                      disabled={!canEdit}
+                      readOnly={!canEdit}
                       className={`h-8 w-full cursor-pointer rounded-md border px-2 pr-8 text-sm`}
                     />
-                    {rule && (
+                    {canEdit && rule && (
                       <button
                         id="clear"
                         onClick={() => handleClearRule(idx)}
@@ -277,13 +297,15 @@ const Profile = () => {
                       </button>
                     )}
                   </div>
-                  <button
-                    id="delete"
-                    onClick={() => requestRuleDelete(idx)}
-                    className="absolute -right-4 top-1/2 -translate-y-1/2"
-                  >
-                    <Icons.deleteRule />
-                  </button>
+                  {canEdit && (
+                    <button
+                      id="delete"
+                      onClick={() => requestRuleDelete(idx)}
+                      className="absolute -right-4 top-1/2 -translate-y-1/2"
+                    >
+                      <Icons.deleteRule />
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -299,7 +321,7 @@ const Profile = () => {
           )}
 
           {/* Rule Input */}
-          {isAddingRule && (
+          {canEdit && isAddingRule && (
             <div className="group relative mt-4 flex items-center gap-2 px-2">
               <div className="relative flex-1">
                 <InputField
@@ -340,37 +362,39 @@ const Profile = () => {
           )}
 
           {/* Add Rule Button */}
-          <div
-            className={`mx-2 mt-3 flex ${
-              rules.length === 0 && !isAddingRule
-                ? "justify-center"
-                : "justify-between"
-            }`}
-          >
-            <span className="mt-1.5 flex flex-col text-sm font-medium text-red-500">
-              {addError}
-            </span>
-
-            <button
-              id="addRule"
-              onClick={handleAddRule}
-              disabled={makedisable}
-              className={`flex h-8 w-[142px] items-center justify-center gap-1 rounded-[8px] bg-black text-sm font-medium text-white ${
-                makedisable
-                  ? "cursor-not-allowed text-[#000000]"
-                  : rules.length === 0 && !isAddingRule
-                    ? "h-8 w-[128px] rounded-md bg-black text-white hover:bg-[#1a1a1a]"
-                    : "border-white text-black"
+          {canEdit && (
+            <div
+              className={`mx-2 mt-3 flex ${
+                rules.length === 0 && !isAddingRule
+                  ? "justify-center"
+                  : "justify-between"
               }`}
             >
-              <Plus
-                className={`h-4 w-4 rounded-full ${!rules.length ? "" : " "} `}
-              />
-              <span className="flex h-4 items-center text-sm font-medium">
-                {rules.length === 0 ? "Add New Notes" : "Add More Notes"}
+              <span className="mt-1.5 flex flex-col text-sm font-medium text-red-500">
+                {addError}
               </span>
-            </button>
-          </div>
+
+              <button
+                id="addRule"
+                onClick={handleAddRule}
+                disabled={makedisable}
+                className={`flex h-8 w-[142px] items-center justify-center gap-1 rounded-[8px] bg-black text-sm font-medium text-white ${
+                  makedisable
+                    ? "cursor-not-allowed text-[#000000]"
+                    : rules.length === 0 && !isAddingRule
+                      ? "h-8 w-[128px] rounded-md bg-black text-white hover:bg-[#1a1a1a]"
+                      : "border-white text-black"
+                }`}
+              >
+                <Plus
+                  className={`h-4 w-4 rounded-full ${!rules.length ? "" : " "} `}
+                />
+                <span className="flex h-4 items-center text-sm font-medium">
+                  {rules.length === 0 ? "Add New Notes" : "Add More Notes"}
+                </span>
+              </button>
+            </div>
+          )}
         </div>
       </Form>
 

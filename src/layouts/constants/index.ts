@@ -1,3 +1,5 @@
+import { Users } from "lucide-react";
+
 import icons from "@/assets/icons";
 import { ROUTES } from "@/constants";
 
@@ -6,6 +8,7 @@ export interface SidebarMenuItems {
   icon?: any;
   link: string;
   children?: SidebarMenuItems[];
+  superAdminOnly?: boolean;
 }
 
 export type SubMenuPorps = {
@@ -30,5 +33,11 @@ export const sidebarMenuItems: SidebarMenuItems[] = [
     title: "Orders",
     icon: icons.order,
     link: ROUTES.ORDERS,
+  },
+  {
+    title: "Users",
+    icon: Users,
+    link: ROUTES.USERS,
+    superAdminOnly: true,
   },
 ];

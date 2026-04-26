@@ -10,6 +10,8 @@ export const KEYS = {
   GET_BOOKING_ID: " GET_BOOKING_ID",
   GET_ARCHIVED_PRODUCTS: "getArchivedProducts",
   GET_ALL_NOTIFICATION: "GET_ALL_NOTIFICATION",
+  GET_ORG_USERS: "GET_ORG_USERS",
+  GET_MY_PROFILE: "GET_MY_PROFILE",
 };
 
 // routes
@@ -43,6 +45,12 @@ export const ROUTES = {
 
   // change password
   CHANGE_PASSWORD: "/change-password",
+
+  // user management
+  USERS: "/users",
+
+  // my account
+  MY_ACCOUNT: "/my-account",
 
   // e-recipt
   E_RECEIPT: "/e-receipt/:bookingId",

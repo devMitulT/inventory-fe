@@ -73,8 +73,8 @@ export const createProductFormSchema = z
     measurementType: z
       .string()
       .min(1, "Measurement type is required")
-      .refine((v) => ["meter", "piece"].includes(v), {
-        message: "Measurement type must be meter or piece",
+      .refine((v) => ["piece"].includes(v), {
+        message: 'Only "piece" measurement type is supported.',
       }),
     gender: z.string().optional(),
     colour: z.array(z.string()).optional(),
@@ -144,7 +144,6 @@ export const createProductFormSchema = z
   });
 
 export const measurementType = [
-  { value: "meter", label: "Meter" },
   { value: "piece", label: "Piece" },
 ];
 export const gender = [

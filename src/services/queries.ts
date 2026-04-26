@@ -20,6 +20,11 @@ import {
   getArchivedProducts,
   getNotifications,
   createProductFromCSV,
+  getOrgUsers,
+  createOrgUser,
+  toggleOrgUserActive,
+  getMyProfile,
+  updateMyProfile,
 } from "./api";
 import { KEYS } from "@/constants";
 
@@ -176,6 +181,7 @@ export const useGetOrders = (
     page,
     primaryPhn,
     date,
+    billedBy,
   }: {
     page: number;
     primaryPhn: string;
@@ -183,12 +189,13 @@ export const useGetOrders = (
       from: string;
       to: string;
     };
+    billedBy?: string;
   },
   enabled: boolean = true,
 ) => {
   return useQuery({
-    queryKey: [KEYS.GET_ORDERS, page, primaryPhn, date],
-    queryFn: () => getOrders({ page, primaryPhn, date }),
+    queryKey: [KEYS.GET_ORDERS, page, primaryPhn, date, billedBy ?? ""],
+    queryFn: () => getOrders({ page, primaryPhn, date, billedBy }),
     enabled,
     staleTime: 0,
   });
@@ -243,6 +250,56 @@ export const useCreateProductFromCSV = () => {
       queryClient.invalidateQueries({
         queryKey: [KEYS.GET_ALL_PRODUCTS],
       });
+    },
+  });
+};
+
+// Users (super-admin)
+export const useGetOrgUsers = () => {
+  return useQuery({
+    queryKey: [KEYS.GET_ORG_USERS],
+    queryFn: () => getOrgUsers(),
+    staleTime: 0,
+  });
+};
+
+export const useCreateOrgUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (bdata: NewUserPayload) => createOrgUser(bdata),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [KEYS.GET_ORG_USERS] });
+    },
+  });
+};
+
+export const useToggleOrgUserActive = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => toggleOrgUserActive(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [KEYS.GET_ORG_USERS] });
+    },
+  });
+};
+
+// My Account
+export const useGetMyProfile = () => {
+  return useQuery({
+    queryKey: [KEYS.GET_MY_PROFILE],
+    queryFn: () => getMyProfile(),
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: "always",
+  });
+};
+
+export const useUpdateMyProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (bdata: MyProfileUpdate) => updateMyProfile(bdata),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [KEYS.GET_MY_PROFILE] });
     },
   });
 };

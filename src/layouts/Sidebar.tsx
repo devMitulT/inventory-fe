@@ -1,8 +1,14 @@
 import { sidebarMenuItems } from "./constants";
 import NavBarMenuItems from "./components/MenuItems";
 import decloneLogo from "@/assets/images/declone.png";
+import { isSuperAdmin } from "@/lib/utils";
 
 function ProductSideBar() {
+  const isSuper = isSuperAdmin();
+  const visibleItems = sidebarMenuItems.filter(
+    (item) => !item.superAdminOnly || isSuper,
+  );
+
   return (
     <>
       <div className="sticky top-0 w-[248px] border-r bg-white">
@@ -17,7 +23,7 @@ function ProductSideBar() {
           />
         </div>
         <div className="h-[calc(100vh_-_80px)] overflow-auto p-3">
-          <NavBarMenuItems menuItems={sidebarMenuItems} />
+          <NavBarMenuItems menuItems={visibleItems} />
         </div>
       </div>
     </>
