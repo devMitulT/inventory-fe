@@ -117,7 +117,10 @@ const MyAccount = () => {
                   <InputField
                     id="myAccountRole"
                     value={
-                      profile?.role === "superAdmin" ? "Super Admin" : "User"
+                      profile?.role === "superAdmin" ||
+                      profile?.role === "admin"
+                        ? "Organization Admin"
+                        : "Employee"
                     }
                     disabled
                     readOnly

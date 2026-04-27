@@ -1,5 +1,3 @@
-import { Users } from "lucide-react";
-
 import icons from "@/assets/icons";
 import { ROUTES } from "@/constants";
 
@@ -35,8 +33,14 @@ export const sidebarMenuItems: SidebarMenuItems[] = [
     link: ROUTES.ORDERS,
   },
   {
-    title: "Users",
-    icon: Users,
+    title: "Statistics",
+    icon: icons.statistics,
+    link: ROUTES.STATISTICS,
+    superAdminOnly: true,
+  },
+  {
+    title: "Employee",
+    icon: icons.employee,
     link: ROUTES.USERS,
     superAdminOnly: true,
   },

@@ -25,7 +25,7 @@ function ReservedProducts() {
               onClick={handleNavigateToCreateBooking}
               className="bg-black text-white hover:bg-black hover:text-white"
             >
-              + Book Order
+              + Add Order
             </Button>
           </div>
         </div>

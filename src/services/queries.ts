@@ -25,6 +25,8 @@ import {
   toggleOrgUserActive,
   getMyProfile,
   updateMyProfile,
+  getStatistics,
+  getPublicReceipt,
 } from "./api";
 import { KEYS } from "@/constants";
 
@@ -211,6 +213,16 @@ export const useGetBookingById = (bid: string) => {
   });
 };
 
+export const useGetPublicReceipt = (bid: string) => {
+  return useQuery({
+    queryKey: ["PUBLIC_RECEIPT", bid],
+    queryFn: () => getPublicReceipt(bid),
+    enabled: !!bid,
+    retry: false,
+    staleTime: 0,
+  });
+};
+
 export const useGetOrgnaztionInfo = () => {
   return useQuery({
     queryKey: [KEYS.GET_ORGANIZATION_INFO],
@@ -301,5 +313,23 @@ export const useUpdateMyProfile = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [KEYS.GET_MY_PROFILE] });
     },
+  });
+};
+
+// Statistics
+export const useGetStatistics = ({
+  startDate,
+  endDate,
+  gender,
+}: {
+  startDate: string;
+  endDate: string;
+  gender?: string;
+}) => {
+  return useQuery({
+    queryKey: [KEYS.GET_STATISTICS, startDate, endDate, gender ?? ""],
+    queryFn: () => getStatistics({ startDate, endDate, gender }),
+    enabled: !!startDate && !!endDate,
+    staleTime: 0,
   });
 };

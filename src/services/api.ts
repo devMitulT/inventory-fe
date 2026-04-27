@@ -48,6 +48,25 @@ export const getOrderById = async (bid: string): Promise<any> => {
   return await request({ url: `/order/orders/${bid}` });
 };
 
+export const getPublicReceipt = async (bid: string): Promise<any> => {
+  return await request({ url: `/order/e-receipt/${bid}` });
+};
+
+export const getStatistics = async ({
+  startDate,
+  endDate,
+  gender,
+}: {
+  startDate: string;
+  endDate: string;
+  gender?: string;
+}): Promise<any> => {
+  const genderParam = gender ? `&gender=${encodeURIComponent(gender)}` : "";
+  return await request({
+    url: `/order/statistics?startDate=${startDate}&endDate=${endDate}${genderParam}`,
+  });
+};
+
 export const getProducts = async (
   page: number,
   search: string,

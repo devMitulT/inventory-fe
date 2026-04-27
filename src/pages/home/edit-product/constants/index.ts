@@ -18,7 +18,7 @@ export interface EditProductProps {
   product: Product;
 }
 export const MEN_SIZES = ["32", "34", "36", "38", "40", "42", "44"];
-export const WOMEN_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
+export const WOMEN_SIZES = ["FREE", "XS", "S", "M", "L", "XL", "XXL"];
 export const editProductFormSchema = z
   .object({
     name: z

@@ -23,6 +23,7 @@ import InvoiceDownload from "./pages/home/view-order/invoiceDownload";
 import ImportSuccessProduct from "./pages/home/importSuccessProduct";
 import ImportProduct from "./pages/home/import-product";
 import Users from "./pages/home/users";
+import Statistics from "./pages/home/statistics";
 
 function App() {
   return (
@@ -71,6 +72,9 @@ function App() {
 
           {/* Manage Users (super admin) */}
           <Route path={ROUTES.USERS} element={<Users />} />
+
+          {/* Statistics */}
+          <Route path={ROUTES.STATISTICS} element={<Statistics />} />
         </Route>
         {/*Not found page */}
         <Route path="*" element={<NotFound />} />
