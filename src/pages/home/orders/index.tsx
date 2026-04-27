@@ -138,7 +138,7 @@ const Orders = () => {
               onClick={handleAddOrder}
               className="h-8 rounded-lg bg-black px-4 text-sm font-medium text-white hover:bg-black hover:text-white"
             >
-              + Add Order
+              + New Order
             </Button>
           </div>
         </div>

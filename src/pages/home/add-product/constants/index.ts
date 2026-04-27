@@ -28,9 +28,9 @@ export const createProductFormSchema = z
     description: z
       .string()
       .trim()
-      .nonempty("Description is required.")
-      .min(10, "Description must be at least 10 characters.")
-      .max(1000, "Description must be lower than 1000 characters. "),
+      .max(1000, "Description must be lower than 1000 characters. ")
+      .optional()
+      .or(z.literal("")),
     perUnitCost: z.union([
       z
         .string()
