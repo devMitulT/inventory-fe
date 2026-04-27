@@ -13,6 +13,7 @@ import CreateBookingPage from "./pages/home/create-booking";
 import ReservedProducts from "./pages/home/reserved-products";
 import ChangePassword from "./pages/auth/change-password";
 import Profile from "./pages/auth/profile";
+import MyAccount from "./pages/auth/my-account";
 import Orders from "./pages/home/orders";
 import EditOrder from "./pages/home/edit-order";
 import ViewOrder from "./pages/home/view-order";
@@ -21,6 +22,7 @@ import NotFound from "./pages/notFound";
 import InvoiceDownload from "./pages/home/view-order/invoiceDownload";
 import ImportSuccessProduct from "./pages/home/importSuccessProduct";
 import ImportProduct from "./pages/home/import-product";
+import Users from "./pages/home/users";
 
 function App() {
   return (
@@ -61,8 +63,14 @@ function App() {
           {/* Profile */}
           <Route path={ROUTES.PROFILE} element={<Profile />} />
 
+          {/* My Account */}
+          <Route path={ROUTES.MY_ACCOUNT} element={<MyAccount />} />
+
           {/* Change Password */}
           <Route path={ROUTES.CHANGE_PASSWORD} element={<ChangePassword />} />
+
+          {/* Manage Users (super admin) */}
+          <Route path={ROUTES.USERS} element={<Users />} />
         </Route>
         {/*Not found page */}
         <Route path="*" element={<NotFound />} />

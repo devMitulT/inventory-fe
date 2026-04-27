@@ -90,13 +90,15 @@ export const productBookingSchema = z
       .refine((val) => ["percentage", "flat"].includes(val), {
         message: "Discount Type is required.",
       }),
-    gstRate: z.coerce
-      .number({
-        required_error: "GST Rate is required",
-        invalid_type_error: "GST Rate must be a number",
-      })
-      .min(0, "GST Rate must be at least 0")
-      .max(100, "GST Rate must be at most 100"),
+    gstRate: z
+      .union([
+        z.literal("").transform(() => undefined),
+        z.coerce
+          .number()
+          .min(0, "GST Rate must be at least 0")
+          .max(100, "GST Rate must be at most 100"),
+      ])
+      .optional(),
   })
   .refine(
     (data) => {
@@ -151,40 +153,13 @@ export const productBookingSchema = z
     },
   )
   .refine(
-    (data) => {
-      if (data.businessGstNumber) {
-        return data?.gstNumber;
-      }
-      return true;
-    },
+    (data) =>
+      data.products.every((p) =>
+        Number.isInteger(Number(p.unit)) && Number(p.unit) > 0,
+      ),
     {
-      message:
-        "A business GST number is required in the organization profile to generate a GST invoice.",
-      path: ["gstNumber"],
-    },
-  )
-  .refine(
-    (data) => {
-      if (data.gstNumber) {
-        return data?.gstRate;
-      }
-      return true;
-    },
-    {
-      message: "Please provide the GST rate when a GST number is added",
-      path: ["gstRate"],
-    },
-  )
-  .refine(
-    (data) => {
-      if (data.gstRate) {
-        return data?.gstNumber;
-      }
-      return true;
-    },
-    {
-      message: "Please provide the GST number when a GST rate is added",
-      path: ["gstNumber"],
+      message: "Unit must be a whole number greater than 0.",
+      path: ["products"],
     },
   );
 export const createBookingBreadScrum = ["Home", "Create Booking"];

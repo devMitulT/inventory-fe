@@ -92,11 +92,7 @@ const UserDataImport = () => {
                         {form.watch("measurementType") && (
                           <Button type="button" variant="outline" asChild>
                             <a
-                              href={
-                                form.watch("measurementType") === "meter"
-                                  ? "/products_meter_demo.csv"
-                                  : "/products_piece_demo.csv"
-                              }
+                              href="/products_piece_demo.csv"
                               className="mt-1 text-xs font-medium text-[#1071D8]"
                               download
                             >

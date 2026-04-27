@@ -78,12 +78,37 @@ interface SignInResponse {
     email: string;
     role: string;
     isActive: boolean;
+    mobileNumber?: string;
     organizationId: string;
     createdAt: string;
     updatedAt: string;
     __v: number;
   };
   token: string;
+}
+
+interface OrgUser {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  isActive: boolean;
+  mobileNumber?: string;
+  organizationId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface MyProfileUpdate {
+  name: string;
+  mobileNumber?: string;
+}
+
+interface NewUserPayload {
+  name: string;
+  email: string;
+  password: string;
+  mobileNumber?: string;
 }
 
 // tomorrow departures
@@ -239,6 +264,7 @@ interface ProductBooking {
   discountAmount?: string | number;
   discountType?: string;
   businessGstNumber: string;
+  billedBy?: string;
 
   __v?: number;
 }

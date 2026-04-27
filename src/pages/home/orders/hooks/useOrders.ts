@@ -1,9 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 
-import { useDeleteBooking, useGetOrders } from "@/services/queries";
+import {
+  useDeleteBooking,
+  useGetOrders,
+  useGetOrgUsers,
+} from "@/services/queries";
 import { ordersColums } from "../constants";
-import { formatDate } from "@/lib/utils";
+import { formatDate, isSuperAdmin } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
 export const useOrders = () => {
@@ -11,6 +15,7 @@ export const useOrders = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
+  const [billedBy, setBilledBy] = useState<string>("");
   const { toast } = useToast();
 
   const [date, setDate] = React.useState<DateRange | undefined>({
@@ -22,6 +27,15 @@ export const useOrders = () => {
 
   const { mutateAsync: deleteOrder, isPending: isBookingDeleting } =
     useDeleteBooking();
+
+  const isSuper = isSuperAdmin();
+  const { data: orgUsersData } = useGetOrgUsers();
+  const orgUserOptions: { label: string; value: string }[] = isSuper
+    ? (orgUsersData?.data ?? []).map((u: OrgUser) => ({
+        label: u.name,
+        value: u.name,
+      }))
+    : [];
 
   const handleFromDateChange = (newDate: Date | undefined) => {
     setDate(() => ({
@@ -51,6 +65,7 @@ export const useOrders = () => {
         from: formattedFrom,
         to: formattedTo,
       },
+      billedBy,
     },
     hasBothDates
   );
@@ -66,6 +81,7 @@ export const useOrders = () => {
         from: "",
         to: "",
       },
+      billedBy,
     },
     !hasBothDates
   );
@@ -124,6 +140,11 @@ export const useOrders = () => {
     }
   };
 
+  const handleBilledByChange = (value: string) => {
+    setBilledBy(value === "__all__" ? "" : value);
+    setPage(1);
+  };
+
   return {
     columns,
     orderDatas,
@@ -137,5 +158,9 @@ export const useOrders = () => {
     isBookingDeleting,
     orderDelete,
     handleOrder,
+    isSuper,
+    orgUserOptions,
+    billedBy,
+    handleBilledByChange,
   };
 };

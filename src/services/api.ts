@@ -26,6 +26,7 @@ export const getOrders = async ({
   page,
   primaryPhn,
   date,
+  billedBy,
 }: {
   page: number;
   primaryPhn: string;
@@ -33,9 +34,13 @@ export const getOrders = async ({
     from: string;
     to: string;
   };
+  billedBy?: string;
 }): Promise<any> => {
+  const billedByParam = billedBy
+    ? `&billedBy=${encodeURIComponent(billedBy)}`
+    : "";
   return await request({
-    url: `/order/orders?page=${page}&limit=10&primaryPhn=${primaryPhn}&fromDate=${date.from}&toDate=${date.to}`,
+    url: `/order/orders?page=${page}&limit=10&primaryPhn=${primaryPhn}&fromDate=${date.from}&toDate=${date.to}${billedByParam}`,
   });
 };
 
@@ -209,5 +214,42 @@ export const updateOrganization = async (
 export const getNotifications = async (page: number): Promise<any> => {
   return await request({
     url: `/notification/notifications?page=${page}&limit=5`,
+  });
+};
+
+// Users (super-admin)
+export const getOrgUsers = async (): Promise<any> => {
+  return await request({ url: `/auth/user` });
+};
+
+export const createOrgUser = async (
+  bodyData: NewUserPayload,
+): Promise<any> => {
+  return await request({
+    url: `/auth/user`,
+    method: "POST",
+    data: bodyData,
+  });
+};
+
+export const toggleOrgUserActive = async (id: string): Promise<any> => {
+  return await request({
+    url: `/auth/user/${id}/active`,
+    method: "PATCH",
+  });
+};
+
+// My account (any logged-in user)
+export const getMyProfile = async (): Promise<any> => {
+  return await request({ url: `/auth/me` });
+};
+
+export const updateMyProfile = async (
+  bodyData: MyProfileUpdate,
+): Promise<any> => {
+  return await request({
+    url: `/auth/me`,
+    method: "PUT",
+    data: bodyData,
   });
 };

@@ -1,35 +1,29 @@
-import { ChevronDown, ChevronUp, Loader } from "lucide-react";
+import { ChevronDown, ChevronUp, UserCircle } from "lucide-react";
 
 import MenuToggle from "./components/MenuToggle";
 import { useNavBar } from "./hooks/useLayout";
 import Icons from "@/assets/icons";
+import { getCurrentUser, isSuperAdmin } from "@/lib/utils";
+import { useGetMyProfile } from "@/services/queries";
 
 const Navbar = () => {
   const {
-    userInfo,
     overlayClass,
     handleModelOpen,
     handleOverlay,
     dropdownOpen,
     handleProfile,
     handleChangePassword,
+    handleMyAccount,
     handleLogout,
   } = useNavBar();
+  const isSuper = isSuperAdmin();
 
-  if (!userInfo) {
-    return (
-      <header className="sticky top-0 z-10 border-b">
-        <div className="shadow-base mr-5 flex h-[56px] items-center justify-end bg-white px-4">
-          <div className="items-bottom mr-1 flex justify-end">Loading</div>
-          <Loader />
-        </div>
-      </header>
-    );
-  }
-
-  const isUserName: string[] = userInfo?.data?.ownerName?.split(" ") ?? [];
-  const firstName = isUserName[0] || "";
-  const lastName = isUserName[1] || "";
+  const { data: meData } = useGetMyProfile();
+  const cachedUser = getCurrentUser();
+  const displayName: string =
+    meData?.data?.name || cachedUser?.name || "";
+  const [firstName = "", lastName = ""] = displayName.trim().split(" ");
 
   return (
     <header className="sticky top-0 z-10 border-b">
@@ -51,14 +45,22 @@ const Navbar = () => {
                 )}
               </div>
               {dropdownOpen && (
-                <div className="absolute right-1.5 mt-[40px] h-28 w-56 rounded-md border border-slate-100 bg-white p-2 shadow-lg">
-                  <div className="absolute flex w-[214px] flex-col">
+                <div className="absolute right-1.5 mt-[40px] w-56 rounded-md border border-slate-100 bg-white p-2 shadow-lg">
+                  <div className="flex w-[214px] flex-col">
                     <button
                       id="Profile"
                       onClick={handleProfile}
                       className="flex h-8 w-52 cursor-pointer items-center gap-3 bg-white p-2 text-left text-sm hover:bg-gray-100"
                     >
-                      <Icons.profile /> Profile
+                      <Icons.profile />{" "}
+                      {isSuper ? "Organization Profile" : "Organization"}
+                    </button>
+                    <button
+                      id="myAccount"
+                      onClick={handleMyAccount}
+                      className="flex h-8 w-52 cursor-pointer items-center gap-3 bg-white p-2 text-left text-sm hover:bg-gray-100"
+                    >
+                      <UserCircle className="h-4 w-4" /> My Account
                     </button>
                     <button
                       id="changePassword"

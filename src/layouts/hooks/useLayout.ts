@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getAccessToken, getUserInfo } from "@/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
+import { getAccessToken } from "@/lib/utils";
 import { ROUTES } from "@/constants";
 import { useGetOrgnaztionInfo } from "@/services/queries";
 
@@ -69,6 +70,7 @@ export const useMenuToggle = () => {
 
 export const useNavBar = () => {
   const router = useNavigate();
+  const queryClient = useQueryClient();
   const { data: userInfo } = useGetOrgnaztionInfo();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const overlayClass = dropdownOpen ? "fixed inset-0 bg-transparate opacity-50 " : "hidden";
@@ -87,9 +89,13 @@ export const useNavBar = () => {
   const handleChangePassword = () => {
     handleNavigate(ROUTES.CHANGE_PASSWORD);
   };
+  const handleMyAccount = () => {
+    handleNavigate(ROUTES.MY_ACCOUNT);
+  };
 
   const handleLogout = () => {
     localStorage.clear();
+    queryClient.clear();
     handleNavigate(ROUTES.SIGN_IN);
   };
 
@@ -102,6 +108,7 @@ export const useNavBar = () => {
     setDropdownOpen,
     handleProfile,
     handleChangePassword,
+    handleMyAccount,
     handleModelOpen,
     handleLogout,
   };

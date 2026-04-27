@@ -3,6 +3,7 @@ import { useGetBookingById } from "@/services/queries";
 import { useReactToPrint } from "react-to-print";
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 //@ts-ignore
 import html2pdf from "html2pdf.js";
@@ -12,6 +13,7 @@ import { generatePDF } from "@/lib/pdfUtils";
 export const useViewOrder = () => {
   const invoiceRef = useRef(null);
   const location = useLocation();
+  const { toast } = useToast();
   const bookingId = location.pathname.split("/").pop();
   const columns = billProductColumns();
   const billColumn = billColumns();
@@ -63,35 +65,70 @@ export const useViewOrder = () => {
     );
   };
 
-  const handleShareOnWhatsapp = () => {
-    const whatsappData = bookingData?.data;
-
-    const invoiceDetails = {
-      amount: whatsappData?.amount || 0,
-      deposit: whatsappData?.depositeAmount || 0,
-      invoiceNumber: whatsappData?.invoiceNumber || "N/A",
-    };
-
+  const buildInvoiceMessage = () => {
+    const data = bookingData?.data;
     const orgName =
-      whatsappData?.organizationId?.organizationName || "Your Organization";
-    const orderId = whatsappData?._id;
-    const currentDomain = window.location.origin;
-    const receiptUrl = `${currentDomain}/e-receipt/${orderId}`;
+      data?.organizationId?.organizationName || "Your Organization";
+    const invoiceNumber = data?.invoiceNumber || "N/A";
+    const orderId = data?._id;
+    const appUrl = (
+      import.meta.env.VITE_APP_URL || window.location.origin
+    ).replace(/\/+$/, "");
+    const receiptUrl = `${appUrl}/e-receipt/${orderId}`;
 
-    const message =
+    return (
       `*Invoice Details:*\n` +
       `Bill From: *${orgName}*\n` +
-      `Invoice Number: *${invoiceDetails.invoiceNumber}*\n\n` +
-      `*Please find the invoice attached:*\n${receiptUrl}`;
+      `Invoice Number: *${invoiceNumber}*\n\n` +
+      `*Please find the invoice attached:*\n${receiptUrl}`
+    );
+  };
 
-    const rawPhone = whatsappData?.customer?.phoneNumberPrimary;
+  const handleShareOnWhatsapp = () => {
+    const message = buildInvoiceMessage();
+    const rawPhone = bookingData?.data?.customer?.phoneNumberPrimary;
 
     if (rawPhone) {
       const whatsappUrl = `https://wa.me/+91${rawPhone}?text=${encodeURIComponent(message)}`;
-      console.log("WhatsApp URL:", whatsappUrl);
       window.open(whatsappUrl, "_blank");
     } else {
       alert("Customer phone number is not available.");
+    }
+  };
+
+  const handleCopyInvoice = async () => {
+    if (!bookingData?.data?._id) return;
+    const message = buildInvoiceMessage();
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(message);
+      } else {
+        // Fallback for older browsers / non-secure contexts
+        const textarea = document.createElement("textarea");
+        textarea.value = message;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "absolute";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+      toast({
+        title: "Copied to clipboard",
+        description: "Invoice details copied. Paste it anywhere.",
+        duration: 2000,
+      });
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error && error.message
+          ? error.message
+          : "Could not copy to clipboard.";
+      toast({
+        title: "Copy failed",
+        description: errorMessage,
+        duration: 2000,
+      });
     }
   };
 
@@ -105,6 +142,7 @@ export const useViewOrder = () => {
     handleDownloadPDF,
     handlePrint,
     handleShareOnWhatsapp,
+    handleCopyInvoice,
     logoBlobUrl,
   };
 };
