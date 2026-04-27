@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import { InputField } from "@/components/ui/Input";
 import { useOrders } from "./hooks/useOrders";
 import CustomTable from "@/components/ui/Table";
@@ -15,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/Select";
+import { ROUTES } from "@/constants";
 
 const Orders = () => {
   const {
@@ -35,6 +38,9 @@ const Orders = () => {
     billedBy,
     handleBilledByChange,
   } = useOrders();
+  const navigate = useNavigate();
+  const handleAddOrder = () =>
+    navigate(ROUTES.CREATE_BOOKING, { state: { formType: "create" } });
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between px-6 pb-2 pt-6">
@@ -125,6 +131,15 @@ const Orders = () => {
                 <CalendarDays className="ml-auto h-4 w-4 opacity-100" />
               </Button>
             </DatePicker>
+          </div>
+          <div>
+            <Button
+              id="addOrder"
+              onClick={handleAddOrder}
+              className="h-8 rounded-lg bg-black px-4 text-sm font-medium text-white hover:bg-black hover:text-white"
+            >
+              + Add Order
+            </Button>
           </div>
         </div>
       </div>

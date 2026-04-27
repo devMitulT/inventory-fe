@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Download, Loader, MapPin, Phone } from "lucide-react";
 import { formatStringDate, formatAddress } from "@/lib/utils";
 import CustomTable from "@/components/ui/Table";
-import { useGetBookingById } from "@/services/queries";
+import { useGetPublicReceipt } from "@/services/queries";
 import { useParams } from "react-router-dom";
 import { billColumns } from "./constants";
 import { generatePDF } from "@/lib/pdfUtils";
@@ -15,7 +15,7 @@ const InvoiceDownload = () => {
     data: fetchedBookingData,
     isLoading,
     isError,
-  } = useGetBookingById(bookingId as string);
+  } = useGetPublicReceipt(bookingId as string);
   const invoiceRef = useRef<HTMLDivElement>(null);
   const [logoBlobUrl, setLogoBlobUrl] = useState<string | undefined>(undefined);
 

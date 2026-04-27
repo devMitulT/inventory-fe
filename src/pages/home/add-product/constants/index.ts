@@ -1,6 +1,20 @@
 import { z } from "zod";
 export const MEN_SIZES = ["32", "34", "36", "38", "40", "42", "44"];
-export const WOMEN_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
+export const WOMEN_SIZES = ["FREE", "XS", "S", "M", "L", "XL", "XXL"];
+
+const WOMEN_SIZE_NUMERIC: Record<string, string> = {
+  XS: "32",
+  S: "34",
+  M: "36",
+  L: "38",
+  XL: "40",
+  XXL: "42",
+};
+
+export const getWomenSizeLabel = (size: string): string => {
+  const numeric = WOMEN_SIZE_NUMERIC[size];
+  return numeric ? `${size} (${numeric})` : size;
+};
 export const createProductFormSchema = z
   .object({
     name: z

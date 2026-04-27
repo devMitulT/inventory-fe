@@ -19,6 +19,8 @@ import importCSV from "./icons/importCSV";
 import csvFileSelect from "./icons/csvFileSelect";
 import csvFileCross from "./icons/importCsvFileCross";
 import importSuccess from "./icons/importSuccess";
+import statistics from "./icons/statistics";
+import employee from "./icons/employee";
 
 export default {
   logo,
@@ -42,4 +44,6 @@ export default {
   csvFileSelect,
   csvFileCross,
   importSuccess,
+  statistics,
+  employee,
 };

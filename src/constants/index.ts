@@ -12,6 +12,7 @@ export const KEYS = {
   GET_ALL_NOTIFICATION: "GET_ALL_NOTIFICATION",
   GET_ORG_USERS: "GET_ORG_USERS",
   GET_MY_PROFILE: "GET_MY_PROFILE",
+  GET_STATISTICS: "GET_STATISTICS",
 };
 
 // routes
@@ -48,6 +49,9 @@ export const ROUTES = {
 
   // user management
   USERS: "/users",
+
+  // statistics
+  STATISTICS: "/statistics",
 
   // my account
   MY_ACCOUNT: "/my-account",

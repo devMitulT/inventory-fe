@@ -54,10 +54,10 @@ const AddUserModal = ({
       <DialogContent className="sm:max-w-[440px]">
         <DialogHeader>
           <DialogTitle className="text-base font-semibold text-black">
-            Add User
+            Add Employee
           </DialogTitle>
           <p className="text-xs font-normal text-[#7B7B7B]">
-            Create a new user for your organization. Share these credentials
+            Create a new employee for your organization. Share these credentials
             with them so they can log in.
           </p>
         </DialogHeader>
@@ -180,7 +180,7 @@ const AddUserModal = ({
                 {isSubmitting ? (
                   <CircularProgressLoader size={20} />
                 ) : (
-                  "Add User"
+                  "Add Employee"
                 )}
               </Button>
             </div>

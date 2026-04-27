@@ -57,8 +57,8 @@ export const useUsers = () => {
       };
       const res = await createOrgUser(payload);
       toast({
-        title: "User Created",
-        description: res?.message || "User created successfully.",
+        title: "Employee Created",
+        description: res?.message || "Employee created successfully.",
         duration: 2000,
       });
       handleCloseAdd();
@@ -66,9 +66,9 @@ export const useUsers = () => {
       const errorMessage =
         error instanceof Error && error.message
           ? error.message
-          : "Failed to create user.";
+          : "Failed to create employee.";
       toast({
-        title: "Error Creating User",
+        title: "Error Creating Employee",
         description: errorMessage,
         duration: 2000,
       });
@@ -80,14 +80,14 @@ export const useUsers = () => {
       const res = await toggleActive(user._id);
       toast({
         title: "Status Updated",
-        description: res?.message || "User status updated.",
+        description: res?.message || "Employee status updated.",
         duration: 2000,
       });
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error && error.message
           ? error.message
-          : "Failed to update user status.";
+          : "Failed to update employee status.";
       toast({
         title: "Error",
         description: errorMessage,

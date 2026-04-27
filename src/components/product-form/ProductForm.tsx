@@ -31,6 +31,7 @@ import {
   gender,
   MEN_SIZES,
   WOMEN_SIZES,
+  getWomenSizeLabel,
 } from "@/pages/home/add-product/constants";
 import {
   SelectItem,
@@ -80,7 +81,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit, onError)}>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <div className="col-span-2 flex">
+                <div className="col-span-2 flex min-w-0">
                   <FormField
                     control={form.control}
                     name="name"
@@ -119,7 +120,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                   )}
                 />
 
-                <div className="col-span-1 flex gap-4">
+                <div className="col-span-1 flex min-w-0 gap-4">
                   <FormField
                     control={form.control}
                     name="perUnitCost"
@@ -274,12 +275,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
                   />
                 )}
                 {form.watch("measurementType") === "piece" && (
-                  <div className="flex gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <FormField
                       control={form.control}
                       name="gender"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>Gender</FormLabel>
                           <Select
                             onValueChange={(value) => {
@@ -355,7 +356,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                                             value={category}
                                             className="hover:cursor-pointer"
                                           >
-                                            {category}
+                                            {getWomenSizeLabel(category)}
                                           </SelectItem>
                                         ),
                                       )}
@@ -373,7 +374,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                         control={form.control}
                         name="size"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="min-w-0">
                             <FormLabel>Size</FormLabel>
 
                             <Popover>
@@ -382,10 +383,18 @@ const ProductForm: React.FC<ProductFormProps> = ({
                                   variant="outline"
                                   className="w-full justify-between h-8 font-normal"
                                 >
-                                  {field.value?.length > 0
-                                    ? field.value.join(", ")
-                                    : "Select size"}
-                                  <ChevronDown className="h-4 w-4 opacity-50" />
+                                  <span className="min-w-0 flex-1 truncate text-left">
+                                    {field.value?.length > 0
+                                      ? field.value
+                                          .map((s: string) =>
+                                            form.watch("gender") === "women"
+                                              ? getWomenSizeLabel(s)
+                                              : s,
+                                          )
+                                          .join(", ")
+                                      : "Select size"}
+                                  </span>
+                                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                               </PopoverTrigger>
 
@@ -440,7 +449,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                                           }}
                                           className="h-4 w-4"
                                         />
-                                        {size}
+                                        {getWomenSizeLabel(size)}
                                       </label>
                                     ))}
                                 </div>
