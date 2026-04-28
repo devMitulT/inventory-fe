@@ -45,8 +45,15 @@ const Statistics = () => {
     handleToChange,
     totalBooking,
     totalRevenue,
-    revenuePoints,
-    bookingPoints,
+    xLabels,
+    revenueTotalPoints,
+    bookingTotalPoints,
+    revenueByEmployee,
+    bookingByEmployee,
+    isOrgAdmin,
+    orgUserOptions,
+    billedBy,
+    handleBilledByChange,
   } = useStatistics();
 
   const isCustom = option === "custom";
@@ -71,7 +78,40 @@ const Statistics = () => {
       <div className="mx-6   p-6 ">
         <div className="mb-5 flex items-center justify-between gap-4">
           <h2 className="text-md font-semibold text-[#000000]">Statistics</h2>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            {isOrgAdmin && (
+              <Select
+                value={billedBy === "" ? "__all__" : billedBy}
+                onValueChange={handleBilledByChange}
+              >
+                <SelectTrigger
+                  id="statsBilledByFilter"
+                  className="h-8 w-[200px] rounded-md border bg-white px-2 font-medium"
+                >
+                  <SelectValue placeholder="Billed By: All" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectGroup>
+                    <SelectItem
+                      value="__all__"
+                      className="hover:cursor-pointer"
+                    >
+                      All
+                    </SelectItem>
+                    {orgUserOptions.map((opt) => (
+                      <SelectItem
+                        key={opt.value}
+                        value={opt.value}
+                        className="hover:cursor-pointer"
+                      >
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            )}
+
             <Select value={option} onValueChange={handleOptionChange}>
               <SelectTrigger
                 id="statsRangeFilter"
@@ -163,9 +203,37 @@ const Statistics = () => {
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <LineChart title="Revenue Overview" points={revenuePoints} />
-          <LineChart title="Booking Overview" points={bookingPoints} />
+          <LineChart
+            title="Revenue Overview"
+            points={revenueTotalPoints}
+            xLabels={xLabels}
+          />
+          <LineChart
+            title="Booking Overview"
+            points={bookingTotalPoints}
+            xLabels={xLabels}
+          />
         </div>
+
+        {isOrgAdmin && billedBy === "" && revenueByEmployee.length > 0 && (
+          <div className="mt-6 rounded-xl border bg-white p-5 shadow-sm">
+            <h3 className="mb-4 text-base font-semibold text-[#000000]">
+              Per-Employee Performance
+            </h3>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <LineChart
+                title="Revenue by Employee"
+                series={revenueByEmployee}
+                xLabels={xLabels}
+              />
+              <LineChart
+                title="Bookings by Employee"
+                series={bookingByEmployee}
+                xLabels={xLabels}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

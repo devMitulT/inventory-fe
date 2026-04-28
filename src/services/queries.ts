@@ -321,14 +321,23 @@ export const useGetStatistics = ({
   startDate,
   endDate,
   gender,
+  billedBy,
 }: {
   startDate: string;
   endDate: string;
   gender?: string;
+  billedBy?: string;
 }) => {
   return useQuery({
-    queryKey: [KEYS.GET_STATISTICS, startDate, endDate, gender ?? ""],
-    queryFn: () => getStatistics({ startDate, endDate, gender }),
+    queryKey: [
+      KEYS.GET_STATISTICS,
+      startDate,
+      endDate,
+      gender ?? "",
+      billedBy ?? "",
+    ],
+    queryFn: () =>
+      getStatistics({ startDate, endDate, gender, billedBy }),
     enabled: !!startDate && !!endDate,
     staleTime: 0,
   });

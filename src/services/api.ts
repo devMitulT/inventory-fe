@@ -56,14 +56,19 @@ export const getStatistics = async ({
   startDate,
   endDate,
   gender,
+  billedBy,
 }: {
   startDate: string;
   endDate: string;
   gender?: string;
+  billedBy?: string;
 }): Promise<any> => {
   const genderParam = gender ? `&gender=${encodeURIComponent(gender)}` : "";
+  const billedByParam = billedBy
+    ? `&billedBy=${encodeURIComponent(billedBy)}`
+    : "";
   return await request({
-    url: `/order/statistics?startDate=${startDate}&endDate=${endDate}${genderParam}`,
+    url: `/order/statistics?startDate=${startDate}&endDate=${endDate}${genderParam}${billedByParam}`,
   });
 };
 
